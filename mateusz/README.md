@@ -1,4 +1,4 @@
-Taken from following gist: https://gist.github.com/jefffriesen/6892860
+Taken from following gist: [Source](https://gist.github.com/jefffriesen/6892860)
 ***
 This is a d3.js visualization of US zip codes.
 
