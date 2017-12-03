@@ -1,0 +1,22 @@
+body{perspective: 900px;overflow: hidden;}
+#map { 
+  height: 400px;
+  height: 100vh; 
+  transition: transform 1s, margin-top 1s;
+}
+#map.threed {
+  transform: rotateX(40deg);
+  box-shadow: 1px 1px 5px rgba(0,0,0,.3);
+  margin-top: -50px;
+}
+span{
+	position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: rgba(255,255,255,.9);
+  padding: 3px 6px;
+  z-index: 1;
+  box-shadow: 1px 1px 5px rgba(0,0,0,.3)
+}
