@@ -1,0 +1,10 @@
+.graticule {
+    fill: none;
+    stroke: #777;
+  }
+  
+  .boundary {
+    fill: #ccc;
+    fill-opacity: .8;
+    stroke: #000;
+  }
