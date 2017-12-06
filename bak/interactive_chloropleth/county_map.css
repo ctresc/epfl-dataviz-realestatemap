@@ -1,0 +1,100 @@
+#title {
+  text-align: center;
+  padding-bottom: 60px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.d3-tip {
+  line-height: 1.5;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 0px;
+  text-align: center;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: #fff;
+  width: 960px;
+  height: 800px;
+  margin-top: 10px;
+}
+
+#charts{
+  float: left;
+}
+
+.chart {
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: blue;
+}
+
+.background.bar {
+  fill: #ccc;
+}
+
+.foreground.bar {
+  fill: steelblue;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.brush rect.extent {
+  fill: steelblue;
+  fill-opacity: .125;
+}
+
+.brush .resize path {
+  fill: #eee;
+  stroke: #666;
+}
+
+#chart path {
+  stroke: #fff;
+}
+
+#chart path.highlighted {
+  cursor: pointer;
+}
+
+.counties {
+  fill: none;
+  stroke: #C0C0C0;
+  stroke-linejoin: round;
+}
+
+.q0-9 { fill:#b2182b; }
+  .q1-9 { fill:#d6604d; }
+  .q2-9 { fill:#f4a582; }
+  .q3-9 { fill:#fddbc7; }
+  .q4-9 { fill:#f7f7f7; }
+  .q5-9 { fill:#d1e5f0; }
+  .q6-9 { fill:#92c5de; }
+  .q7-9 { fill:#4393c3; }
+  .q8-9 { fill:#2166ac; }
+
+#map {
+  float: right;
+}
+
+#map-legend{
+  text-align: center; 
+}
