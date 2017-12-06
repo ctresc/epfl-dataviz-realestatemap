@@ -6,7 +6,9 @@ var counties = d3.map();
 // transormation matrix
 var positioning;
 
-var CENTER_COOR = [40.477572, -101.078555]; //TODO
+//var CENTER_COOR = [40.477572, -101.078555]; //US Center TODO
+var CENTER_COOR = [21.4652807,-84.0605353]; //Cuba Center
+
 var MAX_EXTRUSION = 10;
 
 var months = [], currentMonth;
@@ -146,14 +148,24 @@ function restoreCameraOrientation() {
 
 
 function initGeometry(features) {
-	var path = d3.geo.path().projection(d3.geo.mercator().center(CENTER_COOR));
+	var path = d3.geo.path().projection(d3.geo.mercator()); //TOD .center(CENTER_COOR) inside projection
 
 	features.forEach(function(feature) {
-		var contour = transformSVGPath(path(feature));
+        if (feature.geometry.type === 'MultiPolygon') {
+            // remove Bucharest hole
+            feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1);
+        }
 
-		var county = counties.get(feature.id);
-		county.set('contour', contour);
-		county.set('name', feature.properties.RegionName);
+        var pathStr = path(feature);
+        var contour = transformSVGPath(pathStr);
+
+        //var countyId = parseInt(feature.id);
+        var county = counties.get(feature.id);
+
+        if(county) {
+            county.set('contour', contour);
+            county.set('name', feature.properties.RegionName);
+        }
 	});
 }
 
@@ -173,6 +185,7 @@ function updateMeshes(month) {
 
 	meshes = counties.entries().map(function(entry) {
 		var countyCode = entry.key, county = entry.value;
+		console.log(countyCode);
 		var population = county.get(month);
 		var extrusion = getExtrusion(population);
 		var luminance = getLuminance(population);
@@ -181,7 +194,7 @@ function updateMeshes(month) {
 		var extrudeMaterial = new THREE.MeshLambertMaterial({color: color}); 
 		var faceMaterial = new THREE.MeshBasicMaterial({color: color});
 
-		var geometry = county.get('contour').extrude({
+		var geometry = county.get('contour').extrude({ //TODO
 			amount: extrusion,
 			bevelEnabled: false,
 			extrudeMaterial: 0,

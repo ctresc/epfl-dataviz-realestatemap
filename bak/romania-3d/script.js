@@ -7,6 +7,7 @@ var counties = d3.map();
 var positioning;
 
 var RO_CENTER = [25.0094303, 45.9442858];
+
 var MAX_EXTRUSION = 10;
 
 var years = [], currentYear;
@@ -154,7 +155,8 @@ function initGeometry(features) {
 			feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1);
 		}
 
-		var contour = transformSVGPath(path(feature));
+        var pathStr = path(feature); //TODO altered
+        var contour = transformSVGPath(pathStr);
 
 		var county = counties.get(feature.id);
 		county.set('contour', contour);
