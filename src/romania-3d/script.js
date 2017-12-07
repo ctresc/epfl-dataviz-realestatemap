@@ -3,13 +3,24 @@ var mouse = new THREE.Vector2();
 
 var counties = d3.map();
 
-// transormation matrix
+// transformation matrix
 var positioning;
 
 //var CENTER_COOR = [40.477572, -101.078555]; //US Center TODO
-var CENTER_COOR = [21.4652807,-84.0605353]; //Cuba Center
+//var CENTER_COOR = [21.4652807,-84.0605353]; //Cuba Center
+//var CENTER_COOR = [25.0094303, 45.9442858]; //Saudi Center (RO)
 
-var MAX_EXTRUSION = 10;
+//var CENTER_COOR = [18.466333, -66.105721]; // Puerto Rico
+//var CENTER_COOR = [49.246292, -123.116226]; // Canada
+//var CENTER_COOR = [55.225610000052995, -162.00495109163745]; // Original Estimate
+//var CENTER_COOR = [-162.00495109163745, 55.225610000052995]; // Estimate
+//var CENTER_COOR = [-141.00495109163745, 42.225610000052995]; // Estimate
+var CENTER_COOR = [40.477572, -101.078555]; //US Center Flipped
+//var CENTER_COOR = [52.81379799415833, -174.9580400569851]; // Works with all but first
+//var CENTER_COOR = [-162.00495109163745, 55.225610000052995]; // Works with all but second
+
+
+var MAX_EXTRUSION = 30;
 
 var months = [], currentMonth;
 
@@ -27,7 +38,7 @@ function initRenderer() {
 	renderer = new THREE.WebGLRenderer();
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	renderer.setClearColor(0x000000);
+	renderer.setClearColor(0xffffff);
 
 	document.body.appendChild(renderer.domElement);
 }
@@ -54,7 +65,7 @@ function initCamera() {
 	camera.position.set(-8.278324114488553, 23.715105536749885, 5.334970045945842);
 	camera.up.set(-0.3079731382492934, 0.9436692395156481, -0.12099963846565401);
 
-	// restoreCameraOrientation(camera);
+	restoreCameraOrientation(camera);
 }
 
 function initLights() {
@@ -147,24 +158,60 @@ function restoreCameraOrientation() {
 }
 
 
-function initGeometry(features) {
-	var path = d3.geo.path().projection(d3.geo.mercator()); //TOD .center(CENTER_COOR) inside projection
+function initGeometry(features, topographicalData) {
+
+/*
+    var width  = 600;
+    var height = 400;
+
+    var centerFeature = topojson.feature(topographicalData, topographicalData.objects.county).features[1];
+
+	// create a first guess for the projection
+	var center = d3.geo.centroid(centerFeature);
+	var scale  = 150;
+	var offset = [width/2, height/2];
+	var projection = d3.geo.mercator().scale(scale).center(center)
+		.translate(offset);
+
+	// create the path
+	var path = d3.geo.path().projection(projection);
+
+	// using the path determine the bounds of the current map and use
+	// these to determine better values for the scale and translation
+	var bounds  = path.bounds(topographicalData);
+	var hscale  = scale*width  / (bounds[1][0] - bounds[0][0]);
+	var vscale  = scale*height / (bounds[1][1] - bounds[0][1]);
+	var scale   = (hscale < vscale) ? hscale : vscale;
+	var offset  = [width - (bounds[0][0] + bounds[1][0])/2,
+		height - (bounds[0][1] + bounds[1][1])/2];
+
+	// new projection
+	projection = d3.geo.mercator().center(center)
+		.scale(scale).translate(offset);
+	path = path.projection(projection);
+*/
+
+
+	var path = d3.geo.path().projection(d3.geo.orthographic().center(CENTER_COOR)); //.projection(d3.geo.mercator().center(CENTER_COOR)); //TOD .center(CENTER_COOR) inside projection
 
 	features.forEach(function(feature) {
         if (feature.geometry.type === 'MultiPolygon') {
             // remove Bucharest hole
-            feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1);
+            feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1); //feature.geometry.coordinates[0][0];
+            //feature.geometry.type = 'Polygon';
         }
 
         var pathStr = path(feature);
-        var contour = transformSVGPath(pathStr);
 
-        //var countyId = parseInt(feature.id);
-        var county = counties.get(feature.id);
+        if (pathStr && !pathStr.includes('NaN')) {
+            var contour = transformSVGPath(pathStr);
 
-        if(county) {
-            county.set('contour', contour);
-            county.set('name', feature.properties.RegionName);
+            var county = counties.get(feature.id);
+
+            if (county) {
+                county.set('contour', contour);
+                county.set('name', feature.properties.RegionName);
+            }
         }
 	});
 }
@@ -282,7 +329,7 @@ function prepareCensusData(realEstateTimeSeries, months) {
 
 initThree();
 initPositioningTransform();
-// initLine();
+initLine();
 
 var MonthButtons = React.createClass({
 	getMonthFromHash: function() {
@@ -356,7 +403,7 @@ loadData(dataSources, function(results) {
 	var topographicalData = results.topographicalData;
 
 	var features = topojson.feature(topographicalData, topographicalData.objects['county']).features;
-	initGeometry(features);
+	initGeometry(features, topographicalData);
 
 	React.render(<MonthButtons months={months} />, document.getElementById('container'));
 });

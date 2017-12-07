@@ -6,6 +6,7 @@ var counties = d3.map();
 // transormation matrix
 var positioning;
 
+//var RO_CENTER = [25.0094303, 45.9442858];
 var RO_CENTER = [25.0094303, 45.9442858];
 
 var MAX_EXTRUSION = 10;
@@ -274,7 +275,7 @@ function prepareCensusData(recensaminte, id_judete) {
 
 initThree();
 initPositioningTransform();
-// initLine();
+initLine();
 
 var YearButtons = React.createClass({
 	getYearFromHash: function() {
