@@ -193,11 +193,11 @@ function restoreCameraOrientation() {
 
 function initGeometry(features, topographicalData) {
 
-/*
+
     var width  = 600;
     var height = 400;
 
-    var centerFeature = topojson.feature(topographicalData, topographicalData.objects.county).features[1];
+    var centerFeature = topojson.feature(topographicalData, topographicalData.objects.counties).features[0];
 
 	// create a first guess for the projection
 	var center = d3.geo.centroid(centerFeature);
@@ -222,10 +222,10 @@ function initGeometry(features, topographicalData) {
 	projection = d3.geo.mercator().center(center)
 		.scale(scale).translate(offset);
 	path = path.projection(projection);
-*/
 
 
-	var path = d3.geo.path().projection(d3.geo.orthographic().center(CENTER_COOR)); //.projection(d3.geo.mercator().center(CENTER_COOR)); //TOD .center(CENTER_COOR) inside projection
+
+	//var path = d3.geo.path().projection(d3.geo.orthographic().center(CENTER_COOR)); //orthographic().center(CENTER_COOR)); //.projection(d3.geo.mercator().center(CENTER_COOR)); //TOD .center(CENTER_COOR) inside projection
 
 	features.forEach(function(feature) {
         if (feature.geometry.type === 'MultiPolygon') {
@@ -245,7 +245,9 @@ function initGeometry(features, topographicalData) {
                 county.set('contour', contour);
                 county.set('name', feature.properties.RegionName);
             }
-        }
+        } else {
+        	console.log(pathStr);
+		}
 	});
 }
 
@@ -254,7 +256,8 @@ function initPositioningTransform() {
 
 	var tmp = new THREE.Matrix4();
 	positioning.multiply(tmp.makeRotationX(Math.PI/2));
-	positioning.multiply(tmp.makeTranslation(-390, -10, 0));
+	//positioning.multiply(tmp.makeTranslation(-390, -10, 0));
+	positioning.multiply(tmp.makeTranslation(-450, -250, 0));
 }
 
 function updateMeshes(month) {
@@ -320,10 +323,7 @@ function loadData(sources, callback) {
 }
 
 var dataSources = [
-	//{type: 'json', args: ['data/romania-topo.json'], key: 'topographicalData'},
-	{type: 'json', args: ['data/county_us_topo.json'], key: 'topographicalData'},
-	//{type: 'json', args: ['data/judete-id.json'], key: 'idMapping'},
-	//{type: 'csv', args: ['data/recensaminte.csv'], key: 'recensaminte'}
+	{type: 'json', args: ['data/county_us_topo2.json'], key: 'topographicalData'},
 	{type: 'csv', args: ['data/County_Zhvi_AllHomes.csv'], key: 'realEstateTimeSeries'}
 ];
 
@@ -437,7 +437,7 @@ loadData(dataSources, function(results) {
 
 	var topographicalData = results.topographicalData;
 
-	var features = topojson.feature(topographicalData, topographicalData.objects['county']).features;
+	var features = topojson.feature(topographicalData, topographicalData.objects['counties']).features;
 	initGeometry(features, topographicalData);
 
 	React.render(<MonthButtons months={months} />, document.getElementById('container'));
