@@ -15,12 +15,15 @@ var positioning;
 //var CENTER_COOR = [55.225610000052995, -162.00495109163745]; // Original Estimate
 //var CENTER_COOR = [-162.00495109163745, 55.225610000052995]; // Estimate
 //var CENTER_COOR = [-141.00495109163745, 42.225610000052995]; // Estimate
+//var CENTER_COOR = [40.477572, -101.078555]; //US Center Flipped
 var CENTER_COOR = [40.477572, -101.078555]; //US Center Flipped
+//var CENTER_COOR = [175.477572, 171.078555]; //asdfasfd
+//var CENTER_COOR = [-80, 80]; //asfefee
 //var CENTER_COOR = [52.81379799415833, -174.9580400569851]; // Works with all but first
 //var CENTER_COOR = [-162.00495109163745, 55.225610000052995]; // Works with all but second
 
 
-var MAX_EXTRUSION = 30;
+var MAX_EXTRUSION = 10;
 
 var months = [], currentMonth;
 
@@ -91,6 +94,36 @@ function initLine() {
 	geometry.vertices.push(
 		new THREE.Vector3( 0, 0, 0 ),
 		new THREE.Vector3( 0, 100, 0 )
+	);
+
+	var line = new THREE.Line( geometry, material );
+	scene.add( line );
+}
+
+function initLine2() {
+    var material = new THREE.LineBasicMaterial({
+        color: 0x00ff00
+    });
+
+	var geometry = new THREE.Geometry();
+	geometry.vertices.push(
+		new THREE.Vector3( 0, 0, 0 ),
+		new THREE.Vector3( 100, 0, 0 )
+	);
+
+	var line = new THREE.Line( geometry, material );
+	scene.add( line );
+}
+
+function initLine3() {
+    var material = new THREE.LineBasicMaterial({
+        color: 0xff0000
+    });
+
+	var geometry = new THREE.Geometry();
+	geometry.vertices.push(
+		new THREE.Vector3( 0, 0, 0 ),
+		new THREE.Vector3( 0, 0, 100 )
 	);
 
 	var line = new THREE.Line( geometry, material );
@@ -221,7 +254,7 @@ function initPositioningTransform() {
 
 	var tmp = new THREE.Matrix4();
 	positioning.multiply(tmp.makeRotationX(Math.PI/2));
-	positioning.multiply(tmp.makeTranslation(-480, -250, 0));
+	positioning.multiply(tmp.makeTranslation(-390, -10, 0));
 }
 
 function updateMeshes(month) {
@@ -330,6 +363,8 @@ function prepareCensusData(realEstateTimeSeries, months) {
 initThree();
 initPositioningTransform();
 initLine();
+initLine2();
+initLine3();
 
 var MonthButtons = React.createClass({
 	getMonthFromHash: function() {

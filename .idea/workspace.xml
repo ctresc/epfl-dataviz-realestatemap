@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3eac607-f5c9-4616-877b-34e64eaf0916" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bak/romania-3d/script.js" afterPath="$PROJECT_DIR$/bak/romania-3d/script.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/romania-3d/script.js" afterPath="$PROJECT_DIR$/src/romania-3d/script.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -30,8 +30,8 @@
       <file leaf-file-name="script.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/romania-3d/script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2820">
-              <caret line="194" column="61" lean-forward="false" selection-start-line="194" selection-start-column="61" selection-end-line="194" selection-end-column="61" />
+            <state relative-caret-position="150">
+              <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -60,8 +60,8 @@
       <file leaf-file-name="script.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bak/romania-3d/script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="146" column="1" lean-forward="true" selection-start-line="146" selection-start-column="1" selection-end-line="146" selection-end-column="1" />
+            <state relative-caret-position="159">
+              <caret line="172" column="48" lean-forward="false" selection-start-line="172" selection-start-column="48" selection-end-line="172" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -76,6 +76,7 @@
       <find>center</find>
       <find>mercat</find>
       <find>line</find>
+      <find>transfo</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -85,8 +86,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="chrome-extension://kkmlkkjojmombglmlpbpapmhcaljjkde/js/jquery-3.2.1.min.js" />
-        <option value="$PROJECT_DIR$/src/romania-3d/script.js" />
         <option value="$PROJECT_DIR$/bak/romania-3d/script.js" />
+        <option value="$PROJECT_DIR$/src/romania-3d/script.js" />
       </list>
     </option>
   </component>
@@ -193,12 +194,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1512591232377</updated>
-      <workItem from="1512591235654" duration="14400000" />
+      <workItem from="1512591235654" duration="17508000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14400000" />
+    <option name="totallyTimeSpent" value="17508000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="114" y="4" width="1368" height="741" extended-state="6" />
@@ -253,7 +254,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/romania-3d/script.js</url>
-          <line>205</line>
+          <line>238</line>
           <properties />
           <option name="timeStamp" value="13" />
         </line-breakpoint>
@@ -325,16 +326,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bak/romania-3d/script.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="146" column="1" lean-forward="true" selection-start-line="146" selection-start-column="1" selection-end-line="146" selection-end-column="1" />
+        <state relative-caret-position="159">
+          <caret line="172" column="48" lean-forward="false" selection-start-line="172" selection-start-column="48" selection-end-line="172" selection-end-column="48" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/romania-3d/script.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2820">
-          <caret line="194" column="61" lean-forward="false" selection-start-line="194" selection-start-column="61" selection-end-line="194" selection-end-column="61" />
+        <state relative-caret-position="150">
+          <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
           <folding />
         </state>
       </provider>
