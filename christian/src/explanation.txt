@@ -1,9 +1,0 @@
-Explanation:
-
-https://stackoverflow.com/questions/41588875/d3-csv-unable-to-go-up-one-directory
-
-I copied topo.json here becasue I use python3 -m http.server and it does not allow fetching resources from parent directories.
-
-If there is any other way of doing it, please let me know (using some other http server or whatnot.).
-
-Mat.
