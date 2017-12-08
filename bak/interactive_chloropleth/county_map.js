@@ -49,32 +49,28 @@ for (var i = 0; i <= 7; i++) {
 
 var nation = crossfilter(),
   all = nation.groupAll(),
-  per_cap = nation.dimension(function(d) { return d['1996-04']; }),
+  per_cap = nation.dimension(function(d) { return d.Per_capita_personal_income; }),
   per_caps = per_cap.group(),
-  population = nation.dimension(function(d) { return d['2012-04']; }),
+  population = nation.dimension(function(d) { return d.Population; }),
   populations = population.group();
 
 queue()
     .defer(d3.json, "counties.json")
-    .defer(d3.csv, "data/County_Zhvi_AllHomes_Formatted.csv", function(d) {
-
-      stringTypeProperties = ['RegionName', 'State', 'Metro'];
+    .defer(d3.tsv, "county_growth.tsv", function(d) {
 
       for(var propertyName in d) {
-        if (stringTypeProperties.includes(propertyName)) {
+        if (propertyName == "Area") {
           continue;
         };
         d[propertyName] = +d[propertyName];
       }
 
-      d.id = d['CountyCodeFIPS']
-
       nation.add([d]);
       extant.push(d.id);
 
-      rateById.set(d.id, d['1996-04']);
-      popById.set(d.id, d['2012-04']);
-      nameById.set(d.id, d.RegionName);
+      rateById.set(d.id, d.Per_capita_personal_income);
+      popById.set(d.id, d.Population);
+      nameById.set(d.id, d.Area);
     })
     .await(ready);
 
@@ -90,8 +86,7 @@ function ready(error, us) {
       .on('mouseover',tip.show)
       .on('mouseout', tip.hide);
 
-  // Initialize barcharts
-  var barcharts = [
+  var charts = [
       
     barChart(true)
       .dimension(population)
@@ -109,14 +104,13 @@ function ready(error, us) {
 
   ];
 
-  // Update barcharts on brushing
   var chart = d3.selectAll(".chart")
-    .data(barcharts)
+    .data(charts)
     .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
 
   renderAll();
 
-  // Setup barChart
+  // barChart
   function barChart(percent) {
     if (!barChart.id) barChart.id = 0;
 
@@ -341,12 +335,12 @@ function ready(error, us) {
   }
 
   window.filter = function(filters) {
-    filters.forEach(function(d, i) { barcharts[i].filter(d); });
+    filters.forEach(function(d, i) { charts[i].filter(d); });
     renderAll();
   };
 
   window.reset = function(i) {
-    barcharts.forEach(function (c) {
+    charts.forEach(function (c) {
       c.filter(null);
     })
     renderAll();
