@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="81032c82-d62e-440f-8795-a8ca6babf37c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Research/Zillow/.ipynb_checkpoints/Wrangling-checkpoint.ipynb" afterPath="$PROJECT_DIR$/Research/Zillow/.ipynb_checkpoints/Wrangling-checkpoint.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Research/Zillow/Wrangling.ipynb" afterPath="$PROJECT_DIR$/Research/Zillow/Wrangling.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/christian/src/rgdonohue/data/County_Zhvi_AllHomes_Formatted.csv" afterPath="$PROJECT_DIR$/christian/src/rgdonohue/data/County_Zhvi_AllHomes_Formatted.csv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/christian/src/rgdonohue/index.html" afterPath="$PROJECT_DIR$/christian/src/rgdonohue/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -19,8 +22,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/christian/src/rgdonohue/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="149">
-              <caret line="164" column="51" lean-forward="false" selection-start-line="164" selection-start-column="51" selection-end-line="164" selection-end-column="51" />
+            <state relative-caret-position="75">
+              <caret line="74" column="25" lean-forward="false" selection-start-line="74" selection-start-column="25" selection-end-line="74" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -39,7 +42,7 @@
       <file leaf-file-name="script.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/christian/src/romania-3d/script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3377">
+            <state relative-caret-position="-5341">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
@@ -50,7 +53,7 @@
         <entry file="file://$PROJECT_DIR$/christian/src/rgdonohue/data/County_Zhvi_AllHomes_Formatted.csv">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="0" column="47" lean-forward="false" selection-start-line="0" selection-start-column="39" selection-end-line="0" selection-end-column="47" />
+              <caret line="0" column="3" lean-forward="false" selection-start-line="0" selection-start-column="3" selection-end-line="0" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -86,12 +89,16 @@
       <find>attributeArray</find>
       <find>time</find>
       <find>dura</find>
-      <find>properties</find>
       <find>county</find>
       <find>properties.id</find>
+      <find>properties</find>
+      <find>1106</find>
+      <find>for</find>
+      <find>fill</find>
     </findStrings>
     <replaceStrings>
       <replace>county</replace>
+      <replace>geo_object</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -103,6 +110,7 @@
         <option value="$PROJECT_DIR$/christian/src/interactive_chloropleth/county_map.js" />
         <option value="$PROJECT_DIR$/christian/src/rgdonohue/countriesRandom.cvs" />
         <option value="chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/content.bundle.js" />
+        <option value="$PROJECT_DIR$/christian/src/rgdonohue/data/County_Zhvi_AllHomes_Formatted.csv" />
         <option value="$PROJECT_DIR$/christian/src/rgdonohue/index.html" />
       </list>
     </option>
@@ -255,12 +263,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1512676769179</updated>
-      <workItem from="1512676772310" duration="14950000" />
+      <workItem from="1512676772310" duration="25885000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14950000" />
+    <option name="totallyTimeSpent" value="25885000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="114" y="4" width="1368" height="741" extended-state="6" />
@@ -312,19 +320,16 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/christian/src/rgdonohue/index.html</url>
-          <line>161</line>
-          <properties />
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="8" />
+      <option name="time" value="30" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="JavascriptDebugType">
-        <watch expression="topojson.feature(geo_object, geo_object.objects.county).features" language="HTML" />
+        <watch expression="d.properties[attributeArray[currentAttribute]]" language="HTML" />
+        <watch expression="getColor(d.properties[attributeArray[currentAttribute]], dataRange)[1]" language="HTML" />
+        <watch expression="getColor(d.properties[attributeArray[currentAttribute]], dataRange)[0]" language="HTML" />
+        <watch expression="d.properties[attributeArray[currentAttribute]] == null" language="HTML" />
+        <watch expression="attributeArray[currentAttribute]" language="HTML" />
+        <watch expression="attribute" language="HTML" />
       </configuration>
     </watches-manager>
   </component>
@@ -426,14 +431,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/christian/src/rgdonohue/data/County_Zhvi_AllHomes_Formatted.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="47" lean-forward="false" selection-start-line="0" selection-start-column="39" selection-end-line="0" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/christian/src/interactive_chloropleth/county_map.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="172">
@@ -450,9 +447,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/christian/src/rgdonohue/data/County_Zhvi_AllHomes_Formatted.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="3" lean-forward="false" selection-start-line="0" selection-start-column="3" selection-end-line="0" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/christian/src/romania-3d/script.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3377">
+        <state relative-caret-position="-5341">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -460,8 +465,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/christian/src/rgdonohue/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="164" column="51" lean-forward="false" selection-start-line="164" selection-start-column="51" selection-end-line="164" selection-end-column="51" />
+        <state relative-caret-position="75">
+          <caret line="74" column="25" lean-forward="false" selection-start-line="74" selection-start-column="25" selection-end-line="74" selection-end-column="25" />
           <folding />
         </state>
       </provider>

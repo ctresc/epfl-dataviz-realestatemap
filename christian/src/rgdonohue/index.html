@@ -40,7 +40,6 @@
             stroke-width: .5px;
         }
         .county {
-            fill: steelblue;
             stroke: white;
         }
         #play, #clock {
@@ -73,7 +72,7 @@
     //globals
     var width, height, projection, path, graticule, svg, attributeArray = [], currentAttribute = 0, playing = false;
 
-    var INTERVAL_TIME = 50;
+    var INTERVAL_TIME = 1;
 
     function init() {
 
@@ -136,7 +135,7 @@
             for (var j in timeData) {  // for each row in the CSV
                 if(county_geo[i].id == timeData[j]['CountyCodeFIPS']) {   // if they match
                     for(var k in timeData[i]) {   // for each column in the a row within the CSV
-                        stringTypeProperties = ['CountyCodeFIPS','RegionName', 'State', 'Metro', 'SizeRank'];
+                        stringTypeProperties = ['Idx','CountyCodeFIPS','RegionName', 'State', 'Metro', 'SizeRank'];
 
                         if(!stringTypeProperties.includes(k)) {  // let's not add the name or id as props since we already have them
                             if(attributeArray.indexOf(k) == -1) {
@@ -165,7 +164,10 @@
         var dataRange = getDataRange(); // get the min/max values from the current year's range of data values
         d3.selectAll('.county')  // select all the counties
             .attr('fill-opacity', function(d) {
-                return getColor(d.properties[attributeArray[currentAttribute]], dataRange);  // give them an opacity value based on their current value
+                return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[1];  // give them an opacity value based on their current value
+            })
+            .attr('fill', function(d) {
+                return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[0];  // give them an opacity value based on their current value
             });
     }
 
@@ -175,18 +177,36 @@
         d3.selectAll('.county').transition()  //select all the counties and prepare for a transition to new values
             .duration(750)  // give it a smooth time period for the transition
             .attr('fill-opacity', function(d) {
-                return getColor(d.properties[attributeArray[currentAttribute]], dataRange);  // the end color value
+                return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[1];  // the end color value
             })
+            .attr('fill', function(d) {
+                return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[0];  // the end color value
+            });
 
     }
 
-    function getColor(valueIn, valuesIn) {
+    function getColor(valueIn, rangeValues) {
 
-        var color = d3.scale.linear() // create a linear scale
-            .domain([valuesIn[0],valuesIn[1]])  // input uses min and max values
-            .range([.3,1]);   // output for opacity between .3 and 1 %
+        var color = 'steelblue';
+        var opacity = 0;
 
-        return color(valueIn);  // return that number to the caller
+        if (typeof valueIn == 'undefined') {
+            color = 'darkgrey'
+            opacity = 0.5;
+        } else if (valueIn == 0){
+            color = 'red'
+            opacity = 0.5;
+        } else {
+
+            var opacityMap = d3.scale.linear() // create a linear scale
+                .domain([rangeValues[0], rangeValues[1]])  // input uses min and max values
+                .range([.3, 1]);   // output for opacity between .3 and 1 %
+
+            color = 'green';
+            opacity = opacityMap(valueIn);
+        }
+
+        return [color, opacity];  // return that number to the caller
     }
 
     function getDataRange() {
@@ -196,12 +216,14 @@
         var min = Infinity, max = -Infinity;
         d3.selectAll('.county')
             .each(function(d,i) {
-                var currentValue = d.properties[attributeArray[currentAttribute]];
-                if(currentValue <= min && currentValue != -99 && currentValue != 'undefined') {
-                    min = currentValue;
-                }
-                if(currentValue >= max && currentValue != -99 && currentValue != 'undefined') {
-                    max = currentValue;
+                for(var attribute in attributeArray) {
+                    var currentValue = d.properties[attributeArray[attribute]]; //Array[currentAttribute]];
+                    if (currentValue < min && currentValue != -99 && currentValue != 'undefined' && currentValue != 0) {
+                        min = currentValue;
+                    }
+                    if (currentValue > max && currentValue != -99 && currentValue != 'undefined' && currentValue != 0) {
+                        max = currentValue;
+                    }
                 }
             });
         return [min,max];  //boomsauce
