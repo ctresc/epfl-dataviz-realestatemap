@@ -39,7 +39,7 @@
             stroke: #fff;
             stroke-width: .5px;
         }
-        .country {
+        .county {
             fill: steelblue;
             stroke: white;
         }
@@ -72,6 +72,8 @@
 <script>
     //globals
     var width, height, projection, path, graticule, svg, attributeArray = [], currentAttribute = 0, playing = false;
+
+    var INTERVAL_TIME = 50;
 
     function init() {
 
@@ -134,7 +136,7 @@
             for (var j in timeData) {  // for each row in the CSV
                 if(county_geo[i].id == timeData[j]['CountyCodeFIPS']) {   // if they match
                     for(var k in timeData[i]) {   // for each column in the a row within the CSV
-                        stringTypeProperties = ['CountyCodeFIPS','RegionName', 'State', 'Metro'];
+                        stringTypeProperties = ['CountyCodeFIPS','RegionName', 'State', 'Metro', 'SizeRank'];
 
                         if(!stringTypeProperties.includes(k)) {  // let's not add the name or id as props since we already have them
                             if(attributeArray.indexOf(k) == -1) {
@@ -151,17 +153,17 @@
         drawMap(counties);  // let's mug the map now with our newly populated data object
     }
 
-    function drawMap(world) {
+    function drawMap(geo_object) {
 
-        svg.selectAll(".country")   // select country objects (which don't exist yet)
-            .data(topojson.feature(world, world.objects.county).features)  // bind data to these non-existent objects
+        svg.selectAll(".county")   // select county objects (which don't exist yet)
+            .data(topojson.feature(geo_object, geo_object.objects.county).features)  // bind data to these non-existent objects
             .enter().append("path") // prepare data to be appended to paths
-            .attr("class", "country") // give them a class for styling and access later
-            .attr("id", function(d) { return "code_" + d.properties.id; }, true)  // give each a unique id for access later
+            .attr("class", "county") // give them a class for styling and access later
+            .attr("id", function(d) { return "code_" + d.id; }, true)  // give each a unique id for access later
             .attr("d", path); // create them using the svg path generator defined above
 
         var dataRange = getDataRange(); // get the min/max values from the current year's range of data values
-        d3.selectAll('.country')  // select all the countries
+        d3.selectAll('.county')  // select all the counties
             .attr('fill-opacity', function(d) {
                 return getColor(d.properties[attributeArray[currentAttribute]], dataRange);  // give them an opacity value based on their current value
             });
@@ -170,7 +172,7 @@
     function sequenceMap() {
 
         var dataRange = getDataRange(); // get the min/max values from the current year's range of data values
-        d3.selectAll('.country').transition()  //select all the countries and prepare for a transition to new values
+        d3.selectAll('.county').transition()  //select all the counties and prepare for a transition to new values
             .duration(750)  // give it a smooth time period for the transition
             .attr('fill-opacity', function(d) {
                 return getColor(d.properties[attributeArray[currentAttribute]], dataRange);  // the end color value
@@ -192,7 +194,7 @@
         // and returns the min and max values
 
         var min = Infinity, max = -Infinity;
-        d3.selectAll('.country')
+        d3.selectAll('.county')
             .each(function(d,i) {
                 var currentValue = d.properties[attributeArray[currentAttribute]];
                 if(currentValue <= min && currentValue != -99 && currentValue != 'undefined') {
@@ -219,7 +221,7 @@
                         }
                         sequenceMap();  // update the representation of the map
                         d3.select('#clock').html(attributeArray[currentAttribute]);  // update the clock
-                    }, 2000);
+                    }, INTERVAL_TIME);
 
                     d3.select(this).html('stop');  // change the button label to stop
                     playing = true;   // change the status of the animation
