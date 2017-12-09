@@ -134,14 +134,18 @@
         for (var i in county_geo) {    // for each geometry object
             for (var j in timeData) {  // for each row in the CSV
                 if(county_geo[i].id == timeData[j]['CountyCodeFIPS']) {   // if they match
-                    for(var k in timeData[i]) {   // for each column in the a row within the CSV
+                    for(var k in timeData[0]) {   // for each column in the a row within the CSV
                         stringTypeProperties = ['Idx','CountyCodeFIPS','RegionName', 'State', 'Metro', 'SizeRank'];
 
                         if(!stringTypeProperties.includes(k)) {  // let's not add the name or id as props since we already have them
                             if(attributeArray.indexOf(k) == -1) {
                                 attributeArray.push(k);  // add new column headings to our array for later
                             }
-                            county_geo[i].properties[k] = Number(timeData[j][k])  // add each CSV column key/value to geometry object
+
+                            county_geo[i].properties[k] = Number(timeData[j][k]) // add each CSV column key/value to geometry object
+                            if (county_geo[i].id == '06037'){
+                                console.log(Number(timeData[j][k]));
+                            }
                         }
                     }
                     break;  // stop looking through the CSV since we made our match
@@ -226,7 +230,7 @@
                     }
                 }
             });
-        return [min,max];  //boomsauce
+        return [min,max];  //awesome sauce
     }
 
     function animateMap() {
