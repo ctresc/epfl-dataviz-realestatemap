@@ -1,0 +1,1 @@
+Source: http://arnicas.github.io/interactive-vis-course/Week13/africa_map_slider.html
