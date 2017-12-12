@@ -1,13 +1,8 @@
 //globals
 var width, height, projection, path, graticule, svg, attributeArray = [], currentAttribute = 0, playing = false;
 
-var INTERVAL_TIME = 1;
-
 function init() {
-
     setMap();
-    animateMap();
-
 }
 
 function setMap() {
@@ -21,26 +16,6 @@ function setMap() {
 
     path = d3.geo.path()  // create path generator function
         .projection(projection);  // add our define projection to it
-
-    var dateFormat = d3.time.format("%Y");
-
-    var slider = chroniton()
-        .domain([dateFormat.parse("1996"), dateFormat.parse("2017")])
-            .labelFormat(d3.time.format('%Y'))
-            .width(width)
-            .height(40) //40 is optimal
-            .playButton(true) // can also be set to loop
-            .on("change", function (d) {
-                filterValue = dateFormat(d3.time.year(d));
-                filterStr = filterValue + "-06"; //because dataset spans across 1996-04 to 2017-09
-                currentAttribute = attributeArray.indexOf(filterStr);
-                console.log("filterStr", filterStr);
-                console.log("currentAttribute", currentAttribute);
-                sequenceMap();
-            });
-
-    d3.select("#slider")
-        .call(slider);
 
     graticule = d3.geo.graticule(); // create a graticule
 
@@ -110,6 +85,7 @@ function processData(error, counties, timeData) {
     }
     d3.select('#clock').html(attributeArray[currentAttribute]);  // populate the clock initially with the current year
     drawMap(counties);  // let's mug the map now with our newly populated data object
+    animateMap();
 }
 
 function drawMap(geo_object) {
@@ -136,7 +112,8 @@ function drawMap(geo_object) {
 function sequenceMap() {
 
     var dataRange = getDataRange(); // get the min/max values from the current year's range of data values
-    d3.selectAll('.county').transition()  //select all the counties and prepare for a transition to new values
+    d3.selectAll('.county')
+        .transition()  //select all the counties and prepare for a transition to new values
         .duration(750)  // give it a smooth time period for the transition
         .attr('fill-opacity', function (d) {
             return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[1];  // the end color value
@@ -192,29 +169,22 @@ function getDataRange() {
 }
 
 function animateMap() {
+    var dateFormat = d3.time.format("%Y-%m");
 
-    var timer;  // create timer object
-    d3.select('#play')
-        .on('click', function () {  // when user clicks the play button
-            if (playing == false) {  // if the map is currently playing
-                timer = setInterval(function () {   // set a JS interval
-                    if (currentAttribute < attributeArray.length - 1) {
-                        currentAttribute += 1;  // increment the current attribute counter
-                    } else {
-                        currentAttribute = 0;  // or reset it to zero
-                    }
-                    sequenceMap();  // update the representation of the map
-                    d3.select('#clock').html(attributeArray[currentAttribute]);  // update the clock
-                }, INTERVAL_TIME);
-
-                d3.select(this).html('stop');  // change the button label to stop
-                playing = true;   // change the status of the animation
-            } else {    // else if is currently playing
-                clearInterval(timer);   // stop the animation by clearing the interval
-                d3.select(this).html('play');   // change the button label to play
-                playing = false;   // change the status again
-            }
-        });
+    d3.select("#slider")
+        .call(chroniton()
+            .domain([dateFormat.parse(attributeArray[0]), dateFormat.parse(attributeArray[attributeArray.length - 1])])
+            .labelFormat(d3.time.format('%Y-%m'))
+            .width(width)
+            .playButton(true) // can also be set to loop
+            .loop(true)
+            .playbackRate(0.1) // 1.00 = 10px?
+            .on("change", function (d) {
+                filterValue = dateFormat(d);
+                currentAttribute = attributeArray.indexOf(filterValue);
+                sequenceMap();
+            })
+        );
 }
 
 

@@ -40,20 +40,6 @@
     stroke: white;
 }
 
-#play,
-#clock {
-    position: absolute;
-    top: 15px;
-}
-
-#play {
-    left: 15px;
-}
-
-#clock {
-    left: 65px;
-}
-
 .d3-tip {
     line-height: 1.5;
     padding: 8px;
