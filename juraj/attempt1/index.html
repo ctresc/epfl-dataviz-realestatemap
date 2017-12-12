@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - geometry - extrude shapes from geodata</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+		body {
+			color: #ffffff;
+			font-family: Monospace;
+			font-size: 13px;
+			text-align: center;
+			font-weight: bold;
+			background-color: #000000;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		#info {
+			position: absolute;
+			top: 0px;
+			width: 100%;
+			padding: 5px;
+		}
+
+		a {
+			color: #ffffff;
+		}
+		</style>
+	</head>
+
+	<body>      
+		<div id="container"></div>
+		<div id="info">
+			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - Shapes Extrusion via Geo Data
+		</div>
+    <div style="top:50px; position:absolute;">
+      <a onclick="panCam(0,0,1000,1000);">2D</a><-><a onclick="panCam(0,-450,1000,1000);">3D</a>
+      <br><a onclick="step();">Step</a>
+    </div>
+
+		<script type="text/javascript" src="build/three.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+    <script src="js/libs/Tween.js"></script>
+    <script src="js/math/Lut.js"></script>
+    <script src="js/d3-color.v1.min.js"></script>
+<script src="js/d3-interpolate.v1.min.js"></script>
+<script src="js/d3-scale-chromatic.v1.min.js"></script>
+
+    
+    <script src="data/county_us_topo_albersUsa.js"></script>
+
+		<script>
+			// From d3-threeD.js
+			/* This Source Code Form is subject to the terms of the Mozilla Public
+			 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+			 * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+			function d3threeD(exports) {
+
+				const DEGS_TO_RADS = Math.PI / 180, UNIT_SIZE = 100;
+
+				const DIGIT_0 = 48, DIGIT_9 = 57, COMMA = 44, SPACE = 32, PERIOD = 46, MINUS = 45;
+
+				exports.transformSVGPath =
+				function transformSVGPath(pathStr) {
+					var path = new THREE.ShapePath();
+
+					var idx = 1, len = pathStr.length, activeCmd,
+						x = 0, y = 0, nx = 0, ny = 0, firstX = null, firstY = null,
+						x1 = 0, x2 = 0, y1 = 0, y2 = 0,
+						rx = 0, ry = 0, xar = 0, laf = 0, sf = 0, cx, cy;
+
+					function eatNum() {
+						var sidx, c, isFloat = false, s;
+						// eat delims
+						while (idx < len) {
+							c = pathStr.charCodeAt(idx);
+							if (c !== COMMA && c !== SPACE)
+								break;
+							idx++;
+						}
+						if (c === MINUS)
+							sidx = idx++;
+						else
+							sidx = idx;
+						// eat number
+						while (idx < len) {
+							c = pathStr.charCodeAt(idx);
+							if (DIGIT_0 <= c && c <= DIGIT_9) {
+								idx++;
+								continue;
+							}
+							else if (c === PERIOD) {
+								idx++;
+								isFloat = true;
+								continue;
+							}
+
+							s = pathStr.substring(sidx, idx);
+							return isFloat ? parseFloat(s) : parseInt(s);
+						}
+
+						s = pathStr.substring(sidx);
+						return isFloat ? parseFloat(s) : parseInt(s);
+					}
+
+					function nextIsNum() {
+						var c;
+						// do permanently eat any delims...
+						while (idx < len) {
+							c = pathStr.charCodeAt(idx);
+							if (c !== COMMA && c !== SPACE)
+								break;
+							idx++;
+						}
+						c = pathStr.charCodeAt(idx);
+						return (c === MINUS || (DIGIT_0 <= c && c <= DIGIT_9));
+					}
+
+					var canRepeat;
+					activeCmd = pathStr[0];
+					while (idx <= len) {
+						canRepeat = true;
+						switch (activeCmd) {
+							// moveto commands, become lineto's if repeated
+							case 'M':
+								x = eatNum();
+								y = eatNum();
+								path.moveTo(x, y);
+								activeCmd = 'L';
+								firstX = x;
+								firstY = y;
+								break;
+							case 'm':
+								x += eatNum();
+								y += eatNum();
+								path.moveTo(x, y);
+								activeCmd = 'l';
+								firstX = x;
+								firstY = y;
+								break;
+							case 'Z':
+							case 'z':
+								canRepeat = false;
+								if (x !== firstX || y !== firstY)
+									path.lineTo(firstX, firstY);
+								break;
+							// - lines!
+							case 'L':
+							case 'H':
+							case 'V':
+								nx = (activeCmd === 'V') ? x : eatNum();
+								ny = (activeCmd === 'H') ? y : eatNum();
+								path.lineTo(nx, ny);
+								x = nx;
+								y = ny;
+								break;
+							case 'l':
+							case 'h':
+							case 'v':
+								nx = (activeCmd === 'v') ? x : (x + eatNum());
+								ny = (activeCmd === 'h') ? y : (y + eatNum());
+								path.lineTo(nx, ny);
+								x = nx;
+								y = ny;
+								break;
+							// - cubic bezier
+							case 'C':
+								x1 = eatNum(); y1 = eatNum();
+							case 'S':
+								if (activeCmd === 'S') {
+									x1 = 2 * x - x2; y1 = 2 * y - y2;
+								}
+								x2 = eatNum();
+								y2 = eatNum();
+								nx = eatNum();
+								ny = eatNum();
+								path.bezierCurveTo(x1, y1, x2, y2, nx, ny);
+								x = nx; y = ny;
+								break;
+							case 'c':
+								x1 = x + eatNum();
+								y1 = y + eatNum();
+							case 's':
+								if (activeCmd === 's') {
+									x1 = 2 * x - x2;
+									y1 = 2 * y - y2;
+								}
+								x2 = x + eatNum();
+								y2 = y + eatNum();
+								nx = x + eatNum();
+								ny = y + eatNum();
+								path.bezierCurveTo(x1, y1, x2, y2, nx, ny);
+								x = nx; y = ny;
+								break;
+							// - quadratic bezier
+							case 'Q':
+								x1 = eatNum(); y1 = eatNum();
+							case 'T':
+								if (activeCmd === 'T') {
+									x1 = 2 * x - x1;
+									y1 = 2 * y - y1;
+								}
+								nx = eatNum();
+								ny = eatNum();
+								path.quadraticCurveTo(x1, y1, nx, ny);
+								x = nx;
+								y = ny;
+								break;
+							case 'q':
+								x1 = x + eatNum();
+								y1 = y + eatNum();
+							case 't':
+								if (activeCmd === 't') {
+									x1 = 2 * x - x1;
+									y1 = 2 * y - y1;
+								}
+								nx = x + eatNum();
+								ny = y + eatNum();
+								path.quadraticCurveTo(x1, y1, nx, ny);
+								x = nx; y = ny;
+								break;
+							// - elliptical arc
+							case 'A':
+								rx = eatNum();
+								ry = eatNum();
+								xar = eatNum() * DEGS_TO_RADS;
+								laf = eatNum();
+								sf = eatNum();
+								nx = eatNum();
+								ny = eatNum();
+								if (rx !== ry) {
+									console.warn("Forcing elliptical arc to be a circular one :(",
+										rx, ry);
+								}
+								// SVG implementation notes does all the math for us! woo!
+								// http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+								// step1, using x1 as x1'
+								x1 = Math.cos(xar) * (x - nx) / 2 + Math.sin(xar) * (y - ny) / 2;
+								y1 = -Math.sin(xar) * (x - nx) / 2 + Math.cos(xar) * (y - ny) / 2;
+								// step 2, using x2 as cx'
+								var norm = Math.sqrt(
+									 (rx*rx * ry*ry - rx*rx * y1*y1 - ry*ry * x1*x1) /
+									 (rx*rx * y1*y1 + ry*ry * x1*x1));
+								if (laf === sf)
+									norm = -norm;
+								x2 = norm * rx * y1 / ry;
+								y2 = norm * -ry * x1 / rx;
+								// step 3
+								cx = Math.cos(xar) * x2 - Math.sin(xar) * y2 + (x + nx) / 2;
+								cy = Math.sin(xar) * x2 + Math.cos(xar) * y2 + (y + ny) / 2;
+
+								var u = new THREE.Vector2(1, 0),
+									v = new THREE.Vector2((x1 - x2) / rx,
+									                      (y1 - y2) / ry);
+								var startAng = Math.acos(u.dot(v) / u.length() / v.length());
+								if (u.x * v.y - u.y * v.x < 0)
+									startAng = -startAng;
+
+								// we can reuse 'v' from start angle as our 'u' for delta angle
+								u.x = (-x1 - x2) / rx;
+								u.y = (-y1 - y2) / ry;
+
+								var deltaAng = Math.acos(v.dot(u) / v.length() / u.length());
+								// This normalization ends up making our curves fail to triangulate...
+								if (v.x * u.y - v.y * u.x < 0)
+									deltaAng = -deltaAng;
+								if (!sf && deltaAng > 0)
+									deltaAng -= Math.PI * 2;
+								if (sf && deltaAng < 0)
+									deltaAng += Math.PI * 2;
+
+								path.absarc(cx, cy, rx, startAng, startAng + deltaAng, sf);
+								x = nx;
+								y = ny;
+								break;
+							default:
+								throw new Error("weird path command: " + activeCmd);
+						}
+						// just reissue the command
+						if (canRepeat && nextIsNum())
+							continue;
+						activeCmd = pathStr[idx++];
+					}
+
+					return path;
+				}
+
+			}
+
+			var $d3g = {};
+			d3threeD( $d3g );
+
+			/// Part from g0v/twgeojson
+			/// Graphic Engine and Geo Data Init Functions
+
+			var addGeoObject = function( group, svgObject ) {
+
+				var paths = svgObject.paths;
+				var amounts = svgObject.amounts;
+				var colors = svgObject.colors;
+				var center = svgObject.center;
+        
+        var cmaps = [ 'rainbow', 'cooltowarm', 'blackbody', 'grayscale' ];
+        var colorNumbers = ['16', '128', '256', '512' ];
+        
+        lut = new THREE.Lut( cmaps[3], 512 );
+        tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index / 511.0)).getHexString())]);
+        lut.addColorMap('rdylgn', tmp); 
+        lut = lut.changeColorMap('rdylgn');
+				lut.setMax( max_amount );
+				lut.setMin( 0 );                  
+
+        pathShapes = []
+        var k = 0;
+				for ( var i = 0; i < paths.length; i ++ ) {
+
+					var path = $d3g.transformSVGPath( paths[ i ] );              
+          var color =  lut.getColor( amounts[i] );
+           
+					var material = new THREE.MeshLambertMaterial( {
+						color: color,
+						emissive: color,
+					} );
+					var amount = amounts[ i ];
+					var simpleShapes = path.toShapes( true );
+
+					for ( var j = 0; j < simpleShapes.length; j ++ ) {
+
+						pathShapes[k] = i;               
+						var shape3d = new THREE.ExtrudeBufferGeometry( simpleShapes[ j ], {
+							amount: amount,
+							bevelEnabled: false
+						} );
+                   
+						var mesh = new THREE.Mesh( shape3d, material );
+            
+           for (let k of [...mesh.geometry.attributes.position.array.keys()]) {
+              if ((k + 1)%3 == 0 && mesh.geometry.attributes.position.array[k] != 0) {
+                mesh.geometry.attributes.position.array[k] = max_amount;             
+              }                   
+          };
+          mesh.geometry.attributes.position.needsUpdate = true;
+            
+						mesh.rotation.x = Math.PI;
+						mesh.translateZ( - amount - 1 );
+						mesh.translateX( - center.x );
+						mesh.translateY( - center.y ); 
+            
+            /**************
+        var mesh = new THREE.Object3D();
+
+    			mesh.add( new THREE.LineSegments(
+    
+    				new THREE.Geometry(),
+    
+    				new THREE.LineBasicMaterial( {
+    					color: 0xffffff,
+    					transparent: true,
+    					opacity: 0.5
+    				} )
+    
+    			) );
+    
+    			mesh.add( new THREE.Mesh(
+    
+    				new THREE.Geometry(),
+    
+    				new THREE.MeshPhongMaterial( {
+    					color: 0x156289,
+    					emissive: 0x072534,
+    					side: THREE.DoubleSide,
+    					flatShading: true
+    				} )
+    
+    			) );
+          updateGroupGeometry( mesh,
+    				new THREE.ExtrudeBufferGeometry( pathShapes[k], {
+							amount: amount,
+							bevelEnabled: false
+						} ) ,        amount
+    			);
+          
+          	mesh.rotation.x = Math.PI;
+						//mesh.translateZ( - amount - 1 );
+						mesh.translateX( - center.x );
+						mesh.translateY( - center.y );
+          /**************/
+
+						group.add( mesh );
+            
+            k++;        
+					}
+
+				}
+
+			};
+
+			var renderer, stats, scene, camera;
+
+			init();
+			animate();
+
+			//
+
+			function init() {
+
+				var container = document.getElementById( 'container' );
+
+        max_amount = 100;
+				//
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xb0b0b0 );
+
+        sceneOverlay = new THREE.Scene();
+
+				//
+
+				// camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 2000 );
+        camera = new THREE.OrthographicCamera( window.innerWidth / -2, window.innerWidth /2, window.innerHeight / 2, window.innerHeight / -2, 1, 2000 );
+				camera.position.set( 0, -450, 1000 );                
+        scene.add(camera);          
+        
+        var floorGeometry = new THREE.PlaneGeometry( 100000000, 100000000, 1, 1);
+        var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xb0b0b0, side: THREE.DoubleSide } );
+        var floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
+        floorMesh.castShadow = true;
+        scene.add( floorMesh );  
+        
+        /******** TO HIDE A LITTLE HACK **********/ 
+        var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount, 1, 1);
+        var floorMaterial2 = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
+        var floorMesh2 = new THREE.Mesh( floorGeometry2, floorMaterial );  
+        floorMesh2.position.set(0, 200, -max_amount/2);
+        floorMesh2.rotation.x = Math.PI / 2;
+        scene.add( floorMesh2 );
+        
+        var floorMesh3 = new THREE.Mesh( floorGeometry2, floorMaterial );  
+        floorMesh3.position.set(0, -300, -max_amount/2);
+        floorMesh3.rotation.x = Math.PI / 2;
+        scene.add( floorMesh3 );
+        
+        var floorMesh4 = new THREE.Mesh( floorGeometry2, floorMaterial );  
+        floorMesh4.position.set(-450, -300, -max_amount/2);
+        floorMesh4.rotation.x = Math.PI / 2;
+        floorMesh4.rotation.y = Math.PI / 2;
+        scene.add( floorMesh4 );
+        
+        var floorMesh5 = new THREE.Mesh( floorGeometry2, floorMaterial );  
+        floorMesh5.position.set(450, -300, -max_amount/2);
+        floorMesh5.rotation.x = Math.PI / 2;
+        floorMesh5.rotation.y = Math.PI / 2;
+        scene.add( floorMesh5 );
+        /****************************************/ 
+
+        cameraOverlay = new THREE.OrthographicCamera( window.innerWidth / -2, window.innerWidth /2, window.innerHeight / 2, window.innerHeight / -2, 1, 10 );
+				cameraOverlay.position.set( 0, 0, 10 );    
+        sceneOverlay.add(cameraOverlay);
+				//
+
+				group = new THREE.Group();
+				scene.add( group );
+
+				//
+
+				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.6 );
+				directionalLight.position.set( 0.75, 0.75, 1.0 ).normalize();
+				scene.add( directionalLight );
+
+				var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.2 );
+				scene.add( ambientLight );
+
+				//
+
+/*				var helper = new THREE.GridHelper( 160, 10 );
+				helper.rotation.x = Math.PI / 2;
+				group.add( helper );  */
+
+				//
+        center = { x: 455, y: 205 };
+				var obj = initSVGObject();
+				addGeoObject( group, obj );
+        
+        
+        legend = lut.setLegendOn( { 'layout':'vertical', position: { x: window.innerWidth / 4, y: -window.innerHeight / 25, z: 1 } , dimensions: { width: 50, height: 500 }}); 
+        sceneOverlay.add(legend);
+        labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5 });
+        sceneOverlay.add ( labels['title'] );
+        labels['title'].scale.set(labels['title'].scale.x * 100, labels['title'].scale.y * 100, labels['title'].scale.z);
+ 				 labels['title'].position.set(lut.legend.position.x/* + lut.legend.dimensions.width */, labels['title'].position.y, labels['title'].position.z);
+         for ( var i = 0; i < Object.keys( labels[ 'ticks' ] ).length; i++ ) {
+         	sceneOverlay.add ( labels[ 'lines' ][ i ] );   
+          labels[ 'lines' ][ i ].position.set(labels[ 'lines' ][ i ].position.x, labels[ 'lines' ][ i ].position.y + 2, labels[ 'lines' ][ i ].position.z);     
+					sceneOverlay.add ( labels[ 'ticks' ][ i ] );  
+          labels[ 'ticks' ][ i ].scale.set(labels[ 'ticks' ][ i ].scale.x * 100, labels[ 'ticks' ][ i ].scale.y * 100, labels[ 'ticks' ][ i ].scale.z);        
+          labels['ticks'][i].position.set(labels['ticks'][i].position.x, labels[ 'ticks' ][ i ].position.y + labels['ticks'][i].scale.y /4 - 2, labels['ticks'][i].position.z);
+				}                                                                                                              
+        //sprite = new THREE.Sprite(new THREE.SpriteMaterial( { map : lut.legend.texture, side : THREE.DoubleSide } ));
+        //sprite.scale.set(50, 500, 1)
+        //camera.add(sprite);             
+        //sprite.position.subVectors(camera.position, new THREE.Vector3(0, 0, 100));  
+        //scene.add(camera);
+				//
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.autoClear = false; // To allow render overlay on top of sprited sphere
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+			
+
+				//
+
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.target.set(0, 0, 0);  
+        controls.minAzimuthAngle = - Math.PI /2 * 0.9 ;
+        controls.maxAzimuthAngle = Math.PI / 2 * 0.9;
+        controls.minPolarAngle =  Math.PI * 0.05;
+        controls.maxPolarAngle =  Math.PI * 0.95;
+        controls.update();
+
+        cameraInitialRotation = { x: camera.rotation.x, y: camera.rotation.y, z: camera.rotation.z };
+				//
+
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function initSVGObject() {
+
+				var obj = {};
+
+				/// The geo data from Taipei City, Keelung City, Taipei County in SVG form
+				obj.paths = county_us_topo_albersUsa_svg_path_list;//.slice(0, 15);    
+/*  [
+					/// Taipei City
+					"M366.2182,108.9780 L368.0329,110.3682 L367.5922,112.4411 L369.9258,116.0311 L368.9827,117.3543 " +
+					"L371.5686,119.8491 L370.5599,121.7206 L372.9314,124.8009 L368.8889,126.7603 L369.2695,130.7622 " +
+					"L366.1499,130.3388 L363.4698,128.1161 L362.9256,125.6018 L360.8153,126.4025 L360.2968,124.3588 " +
+					"L361.9519,121.1623 L360.4475,118.7162 L358.1163,117.8678 L358.7094,115.7577 L361.6243,112.4576 Z",
+					/// Keelung City
+					"M380.2689,113.3850 L383.5604,114.2370 L383.7404,114.2386 L385.4082,115.6247 L384.9725,117.4631 " +
+					"L381.6681,117.9439 L383.0209,121.0914 L379.4649,122.7061 L373.4987,118.8487 L372.0980,114.7589 " +
+					"L377.9716,112.0707 Z",
+					/// Taipei County
+					"M359.4486,155.6690 L357.0422,152.7420 L355.1688,148.0173 L357.1186,145.8045 L354.1323,141.2242 " +
+					"L351.1807,141.6609 L348.9387,140.5372 L349.5415,137.8396 L347.5174,136.1694 L347.6299,129.2327 " +
+					"L351.4192,128.8067 L354.2518,125.3113 L352.5805,121.8038 L349.3190,120.9429 L344.3277,116.7676 " +
+					"L350.9772,115.1221 L354.5759,112.5371 L354.5667,110.6949 L357.4098,105.7489 L362.3963,101.8443 " +
+					"L364.4415,101.0819 L364.5314,101.0828 L364.6209,101.1230 L364.7698,101.2029 L368.1221,101.5115 " +
+					"L371.7216,104.1338 L372.2958,106.7261 L375.5949,109.6971 L377.0415,108.8875 L377.0737,108.6526 " +
+					"L377.4037,108.6165 L376.8840,109.7091 L376.7323,109.9037 L377.9416,112.0705 L371.7970,114.8736 " +
+					"L374.0935,119.4031 L380.7848,122.7963 L382.6529,121.9897 L381.5792,117.8256 L385.0339,117.3069 " +
+					"L385.4082,115.6247 L388.7014,116.3969 L389.8697,116.6024 L390.0206,116.4860 L391.0396,116.6118 " +
+					"L394.6665,116.9929 L394.4694,119.2255 L394.3172,119.4987 L395.3792,121.8977 L395.2728,124.0526 " +
+					"L397.2123,125.6350 L401.1709,126.2516 L401.2612,126.2130 L401.4086,126.6060 L400.1992,127.7733 " +
+					"L399.7769,128.0446 L399.6247,128.3179 L398.1779,129.0521 L394.2418,129.2969 L388.7324,130.9385 " +
+					"L389.2782,134.0003 L383.7237,137.0111 L381.7445,139.9336 L379.7001,139.9546 L376.1539,143.0580 " +
+					"L371.3022,144.1094 L368.6009,146.5914 L368.7361,151.1399 L363.6153,154.4980 " +
+					/// Taipei County hole.
+					"M363.4600,128.3904 L366.6300,130.3829 L369.3732,129.3913 L369.5603,125.6695 L374.3989,125.1677 " +
+					"L370.8412,123.6440 L371.0684,118.8252 L369.0431,117.3157 L369.6882,115.7936 L367.8578,112.8749 " +
+					"L368.1217,110.4867 L366.5152,109.2554 L361.9554,112.3435 L358.1163,117.8678 L361.7218,120.2192 " +
+					"L360.7261,126.3232 L362.8064,125.5221 Z"];         */
+
+				obj.amounts = Array.from({length: obj.paths.length}, () => Math.floor(Math.random() * 100));
+        colors = [ 0xC07000, 0xC08000, 0xC0A000 ];
+				obj.colors =  Array.from({length: obj.paths.length}, (o, i) => colors[i % colors.length]);
+				obj.center = center;
+
+				return obj;
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+        camera.updateProjectionMatrix();
+				
+				stats.update();
+        
+        TWEEN.update();
+        
+        controls.update();
+        
+        //legend.quaternion.copy(camera.quaternion);
+        //legend.lookAt( camera.position );
+        //legend.rotation.copy(camera.rotation);    
+        //sprite.position.subVectors(controls.target, new THREE.Vector3(0, 0, 100));   
+        
+        //sprite.position.set( 0, 0, 900 - camera.position.z );   
+        //var scale = sprite.position.distanceTo(camera.position) / 900;
+        //scale = 1 / camera.zoom; //Math.min(100, Math.max(0, scale));
+        //sprite.scale.set(scale * 50 , scale * 500, scale); 
+        
+        render();
+
+			}
+
+			function render() {
+        renderer.clear();
+				renderer.render( scene, camera );
+        renderer.clearDepth();
+				renderer.render( sceneOverlay, cameraOverlay );
+			}
+            
+    // from https://stackoverflow.com/questions/38395589/is-it-possible-to-tween-orbit-controls-with-three-js
+    function panCam(xTarget,yTarget,zTarget,tweenDuration){
+
+          TWEEN.removeAll();
+
+          var camNewPosition= { x : xTarget, y : yTarget, z : zTarget};
+          var camPosTween = new TWEEN.Tween(camera.position).to(camNewPosition, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          var controlsPosTween = new TWEEN.Tween(controls.target).to({x: 0, y: 0, z:0}, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          var camRotTween = new TWEEN.Tween(camera.rotation).to(cameraInitialRotation, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          var curZoom = {value: camera.zoom};
+          var newZoom = {value: 1};
+          var camZoomTween = new TWEEN.Tween(curZoom).to(newZoom, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut);
+          camZoomTween.onUpdate(function() {
+            camera.zoom = curZoom.value;
+          });
+          camZoomTween.start();
+    }
+    
+    function step() {
+    
+      var amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);
+      var clr = lut.getColor(amnt);
+      for (let [i, mesh] of group.children.entries()) {
+        if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
+            amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);
+            clr = lut.getColor(amnt);
+        }
+         
+     
+            new TWEEN.Tween(mesh.material.color)
+            .to(clr, 1000)
+            .easing(TWEEN.Easing.Quartic.Out)
+            .start(); 
+            new TWEEN.Tween(mesh.material.emissive)
+            .to(clr, 1000)
+            .easing(TWEEN.Easing.Quartic.Out)
+            .start();        
+                  
+            /*var data = {
+        			amount: amnt,
+        			bevelEnabled: false,
+        		};   
+            updateGroupGeometry( mesh,
+      				new THREE.ExtrudeBufferGeometry( pathShapes[i], data), amnt
+      			);   */
+        
+        
+       /* for (let j of [...mesh.geometry.attributes.position.array.keys()]) {
+              if ((j + 1)%3 == 0 && mesh.geometry.attributes.position.array[j] != 0) {
+                //var curVerZ = {value: mesh.geometry.attributes.position.array[j]};
+                //var newVerZ = {value: amnt};
+                new TWEEN.Tween({value: mesh.geometry.attributes.position.array[j]}).to({value: amnt}, 1000).easing(TWEEN.Easing.Sinusoidal.InOut)
+                .onUpdate(function(object) {
+                    mesh.geometry.attributes.position.array[j] = object.value;
+                   mesh.geometry.attributes.position.needsUpdate = true;
+                })
+                .start();   
+                //mesh.geometry.attributes.position.array[i] = amnt;                
+              }                   
+          };     */
+          //mesh.geometry.attributes.position.needsUpdate = true;
+                     //await sleep(1000);
+                  //mesh.geometry.attributes.position.needsUpdate != true
+          //var curZ = {value: mesh.position.z};
+          //var newZ = {value: amnt + 1};
+          new TWEEN.Tween(mesh.position).to({z: amnt + 1}, 1000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+  /*        zTween.onUpdate(function() {
+            mesh.position.z = curZ.value;
+          });   */
+          //zTween.start();
+
+         } 
+      /*    
+            for (let [i, mesh] of group.children[0].geometry.attributes.position.array.entries()) {
+if ((i + 1)%3 == 0 && group.children[0].geometry.attributes.position.array[i] == 99) group.children[0].geometry.attributes.position.array[i] = 50;}
+            
+      };
+                   */
+    /*
+      new TWEEN.Tween(mesh.material.color.getHSV())
+        .to({h: h, s: s, v: v}, 200)
+        .easing(TWEEN.Easing.Quartic.In)
+        .onUpdate(
+            function()
+            {
+                mesh.material.color.setHSV(this.h, this.s, this.v);
+            }
+        )
+        .start();  */
+    }
+    
+/*    function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}       */
+    
+    // taken from https://threejs.org/docs/#api/geometries/ExtrudeBufferGeometry
+    /*function updateGroupGeometry( mesh, geometry, amount) {       
+    	mesh.geometry.dispose();
+      //mesh.geometry = null;
+    	mesh.geometry = geometry;
+			//mesh.rotation.x = Math.PI;
+			//mesh.translateZ( - amount - 1 );
+			//mesh.translateX( - center.x );
+			//mesh.translateY( - center.y );         
+    }      */
+    function updateGroupGeometry( mesh, geometry, amount ) {  
+    
+	mesh.children[ 0 ].geometry.dispose();
+	mesh.children[ 1 ].geometry.dispose();
+
+	mesh.children[ 0 ].geometry = new THREE.WireframeGeometry( geometry );
+	mesh.children[ 1 ].geometry = geometry;
+  //mesh.children[ 0 ].rotation.x = Math.PI;
+ // mesh.children[ 1 ].rotation.x = Math.PI;
+ //mesh.children[ 0 ].translateZ( - amount - 1 );
+  //mesh.children[ 1 ].translateZ( - amount - 1 );
+	// these do not update nicely together if shared
+
+}
+    
+    
+
+		</script>
+
+	</body>
+</html>
