@@ -1,8 +1,9 @@
 //globals
-var width, height, projection, path, graticule, svg, attributeArray = [], currentAttribute = 0, playing = false;
+var width, height, projection, path, graticule, svg, selectedCounties = [], attributeArray = [], currentAttribute = 0, playing = false;
 
 function init() {
     setMap();
+    setLineChart();
 }
 
 function setMap() {
@@ -51,6 +52,69 @@ function setMap() {
 
 }
 
+function setLineChart() {
+    var svg2 = d3.select("#line-chart").append("svg").attr("width", width).attr("height", height),
+        margin2 = { top: 20, right: 20, bottom: 30, left: 50 },
+        width2 = width - margin2.left - margin2.right,
+        height2 = height - margin2.top - margin2.bottom,
+        g2 = svg2.append("g").attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+    var parseTime = d3.time.format("%d-%b-%y");
+
+    var x = d3.time.scale()
+        .rangeRound([0, width2]);
+
+    var y = d3.scale.linear()
+        .rangeRound([height2, 0]);
+
+    // Define the axes
+    var xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").ticks(5);
+
+    var yAxis = d3.svg.axis().scale(y)
+        .orient("left").ticks(5);
+
+    var line = d3.svg.line()
+        .x(function (d) { return x(d.date); })
+        .y(function (d) { return y(d.close); });
+
+    d3.tsv("data/line.tsv", function (d) {
+        d.date = parseTime.parse(d.date);
+        d.close = +d.close;
+        return d;
+    }, function (error, data) {
+        if (error) throw error;
+
+        x.domain(d3.extent(data, function (d) { return d.date; }));
+        y.domain(d3.extent(data, function (d) { return d.close; }));
+
+        g2.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height2 + ")")
+            .call(xAxis);
+
+        g2.append("g")
+            .attr("class", "y axis")
+            .append("text")
+            .attr("fill", "#000")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "0.71em")
+            .attr("text-anchor", "end")
+            .text("Price ($)")
+            .call(yAxis);
+
+        g2.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
+    });
+}
+
 function loadData() {
 
     queue()   // queue function loads all external data files asynchronously
@@ -97,9 +161,15 @@ function drawMap(geo_object) {
         .attr("id", function (d) { return "code_" + d.id; }, true)  // give each a unique id for access later
         .attr("d", path) // create them using the svg path generator defined above
         .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
+        .on('mouseout', tip.hide)
+        .on('click', function (d) {
+            let color = selectCounty(d);
+            d3.select(this)
+                .style('fill', color);
+        });
 
     var dataRange = getDataRange(); // get the min/max values from the current year's range of data values
+
     d3.selectAll('.county')  // select all the counties
         .attr('fill-opacity', function (d) {
             return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[1];  // give them an opacity value based on their current value
@@ -107,6 +177,21 @@ function drawMap(geo_object) {
         .attr('fill', function (d) {
             return getColor(d.properties[attributeArray[currentAttribute]], dataRange)[0];  // give them an opacity value based on their current value
         });
+}
+
+function selectCounty(d) {
+    let color = '';
+    let dataRange = getDataRange();
+    if (selectedCounties.indexOf(d.id) == -1) {
+        selectedCounties.push(d.id);
+        color = 'orange'
+    }
+    else {
+        let index = selectedCounties.indexOf(d.id);
+        selectedCounties.splice(index, 1);
+        color = getColor(d.properties[attributeArray[currentAttribute]], dataRange)[0];
+    }
+    return color;
 }
 
 function sequenceMap() {

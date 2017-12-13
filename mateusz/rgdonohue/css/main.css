@@ -9,6 +9,12 @@
     position: relative;
 }
 
+#line-chart {
+  width: 960px;
+  height: 580px;
+  position: relative;
+}
+
 .stroke {
     fill: none;
     stroke: #888;
