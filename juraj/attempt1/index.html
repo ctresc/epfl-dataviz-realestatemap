@@ -45,9 +45,8 @@
     <script src="js/libs/Tween.js"></script>
     <script src="js/math/Lut.js"></script>
     <script src="js/d3-color.v1.min.js"></script>
-<script src="js/d3-interpolate.v1.min.js"></script>
-<script src="js/d3-scale-chromatic.v1.min.js"></script>
-
+    <script src="js/d3-interpolate.v1.min.js"></script>
+    <script src="js/d3-scale-chromatic.v1.min.js"></script>  
     
     <script src="data/county_us_topo_albersUsa.js"></script>
 
@@ -300,7 +299,6 @@
 
 				var paths = svgObject.paths;
 				var amounts = svgObject.amounts;
-				var colors = svgObject.colors;
 				var center = svgObject.center;
         
         var cmaps = [ 'rainbow', 'cooltowarm', 'blackbody', 'grayscale' ];
@@ -349,47 +347,7 @@
 						mesh.translateX( - center.x );
 						mesh.translateY( - center.y ); 
             
-            /**************
-        var mesh = new THREE.Object3D();
-
-    			mesh.add( new THREE.LineSegments(
-    
-    				new THREE.Geometry(),
-    
-    				new THREE.LineBasicMaterial( {
-    					color: 0xffffff,
-    					transparent: true,
-    					opacity: 0.5
-    				} )
-    
-    			) );
-    
-    			mesh.add( new THREE.Mesh(
-    
-    				new THREE.Geometry(),
-    
-    				new THREE.MeshPhongMaterial( {
-    					color: 0x156289,
-    					emissive: 0x072534,
-    					side: THREE.DoubleSide,
-    					flatShading: true
-    				} )
-    
-    			) );
-          updateGroupGeometry( mesh,
-    				new THREE.ExtrudeBufferGeometry( pathShapes[k], {
-							amount: amount,
-							bevelEnabled: false
-						} ) ,        amount
-    			);
-          
-          	mesh.rotation.x = Math.PI;
-						//mesh.translateZ( - amount - 1 );
-						mesh.translateX( - center.x );
-						mesh.translateY( - center.y );
-          /**************/
-
-						group.add( mesh );
+            group.add( mesh );
             
             k++;        
 					}
@@ -424,13 +382,12 @@
 				camera.position.set( 0, -450, 1000 );                
         scene.add(camera);          
         
-        var floorGeometry = new THREE.PlaneGeometry( 100000000, 100000000, 1, 1);
+        /******** TO HIDE A LITTLE HACK **********/ 
+        var floorGeometry = new THREE.PlaneGeometry( 1000, 1000, 1, 1);
         var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xb0b0b0, side: THREE.DoubleSide } );
         var floorMesh = new THREE.Mesh( floorGeometry, floorMaterial );
-        floorMesh.castShadow = true;
         scene.add( floorMesh );  
         
-        /******** TO HIDE A LITTLE HACK **********/ 
         var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount, 1, 1);
         var floorMaterial2 = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
         var floorMesh2 = new THREE.Mesh( floorGeometry2, floorMaterial );  
@@ -474,12 +431,7 @@
 				scene.add( ambientLight );
 
 				//
-
-/*				var helper = new THREE.GridHelper( 160, 10 );
-				helper.rotation.x = Math.PI / 2;
-				group.add( helper );  */
-
-				//
+        
         center = { x: 455, y: 205 };
 				var obj = initSVGObject();
 				addGeoObject( group, obj );
@@ -490,19 +442,15 @@
         labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5 });
         sceneOverlay.add ( labels['title'] );
         labels['title'].scale.set(labels['title'].scale.x * 100, labels['title'].scale.y * 100, labels['title'].scale.z);
- 				 labels['title'].position.set(lut.legend.position.x/* + lut.legend.dimensions.width */, labels['title'].position.y, labels['title'].position.z);
-         for ( var i = 0; i < Object.keys( labels[ 'ticks' ] ).length; i++ ) {
+ 				labels['title'].position.set(lut.legend.position.x/* + lut.legend.dimensions.width */, labels['title'].position.y, labels['title'].position.z);
+        for ( var i = 0; i < Object.keys( labels[ 'ticks' ] ).length; i++ ) {
          	sceneOverlay.add ( labels[ 'lines' ][ i ] );   
           labels[ 'lines' ][ i ].position.set(labels[ 'lines' ][ i ].position.x, labels[ 'lines' ][ i ].position.y + 2, labels[ 'lines' ][ i ].position.z);     
 					sceneOverlay.add ( labels[ 'ticks' ][ i ] );  
           labels[ 'ticks' ][ i ].scale.set(labels[ 'ticks' ][ i ].scale.x * 100, labels[ 'ticks' ][ i ].scale.y * 100, labels[ 'ticks' ][ i ].scale.z);        
           labels['ticks'][i].position.set(labels['ticks'][i].position.x, labels[ 'ticks' ][ i ].position.y + labels['ticks'][i].scale.y /4 - 2, labels['ticks'][i].position.z);
-				}                                                                                                              
-        //sprite = new THREE.Sprite(new THREE.SpriteMaterial( { map : lut.legend.texture, side : THREE.DoubleSide } ));
-        //sprite.scale.set(50, 500, 1)
-        //camera.add(sprite);             
-        //sprite.position.subVectors(camera.position, new THREE.Vector3(0, 0, 100));  
-        //scene.add(camera);
+				}    
+                                                                                                                  
 				//
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -538,42 +486,9 @@
 
 				var obj = {};
 
-				/// The geo data from Taipei City, Keelung City, Taipei County in SVG form
-				obj.paths = county_us_topo_albersUsa_svg_path_list;//.slice(0, 15);    
-/*  [
-					/// Taipei City
-					"M366.2182,108.9780 L368.0329,110.3682 L367.5922,112.4411 L369.9258,116.0311 L368.9827,117.3543 " +
-					"L371.5686,119.8491 L370.5599,121.7206 L372.9314,124.8009 L368.8889,126.7603 L369.2695,130.7622 " +
-					"L366.1499,130.3388 L363.4698,128.1161 L362.9256,125.6018 L360.8153,126.4025 L360.2968,124.3588 " +
-					"L361.9519,121.1623 L360.4475,118.7162 L358.1163,117.8678 L358.7094,115.7577 L361.6243,112.4576 Z",
-					/// Keelung City
-					"M380.2689,113.3850 L383.5604,114.2370 L383.7404,114.2386 L385.4082,115.6247 L384.9725,117.4631 " +
-					"L381.6681,117.9439 L383.0209,121.0914 L379.4649,122.7061 L373.4987,118.8487 L372.0980,114.7589 " +
-					"L377.9716,112.0707 Z",
-					/// Taipei County
-					"M359.4486,155.6690 L357.0422,152.7420 L355.1688,148.0173 L357.1186,145.8045 L354.1323,141.2242 " +
-					"L351.1807,141.6609 L348.9387,140.5372 L349.5415,137.8396 L347.5174,136.1694 L347.6299,129.2327 " +
-					"L351.4192,128.8067 L354.2518,125.3113 L352.5805,121.8038 L349.3190,120.9429 L344.3277,116.7676 " +
-					"L350.9772,115.1221 L354.5759,112.5371 L354.5667,110.6949 L357.4098,105.7489 L362.3963,101.8443 " +
-					"L364.4415,101.0819 L364.5314,101.0828 L364.6209,101.1230 L364.7698,101.2029 L368.1221,101.5115 " +
-					"L371.7216,104.1338 L372.2958,106.7261 L375.5949,109.6971 L377.0415,108.8875 L377.0737,108.6526 " +
-					"L377.4037,108.6165 L376.8840,109.7091 L376.7323,109.9037 L377.9416,112.0705 L371.7970,114.8736 " +
-					"L374.0935,119.4031 L380.7848,122.7963 L382.6529,121.9897 L381.5792,117.8256 L385.0339,117.3069 " +
-					"L385.4082,115.6247 L388.7014,116.3969 L389.8697,116.6024 L390.0206,116.4860 L391.0396,116.6118 " +
-					"L394.6665,116.9929 L394.4694,119.2255 L394.3172,119.4987 L395.3792,121.8977 L395.2728,124.0526 " +
-					"L397.2123,125.6350 L401.1709,126.2516 L401.2612,126.2130 L401.4086,126.6060 L400.1992,127.7733 " +
-					"L399.7769,128.0446 L399.6247,128.3179 L398.1779,129.0521 L394.2418,129.2969 L388.7324,130.9385 " +
-					"L389.2782,134.0003 L383.7237,137.0111 L381.7445,139.9336 L379.7001,139.9546 L376.1539,143.0580 " +
-					"L371.3022,144.1094 L368.6009,146.5914 L368.7361,151.1399 L363.6153,154.4980 " +
-					/// Taipei County hole.
-					"M363.4600,128.3904 L366.6300,130.3829 L369.3732,129.3913 L369.5603,125.6695 L374.3989,125.1677 " +
-					"L370.8412,123.6440 L371.0684,118.8252 L369.0431,117.3157 L369.6882,115.7936 L367.8578,112.8749 " +
-					"L368.1217,110.4867 L366.5152,109.2554 L361.9554,112.3435 L358.1163,117.8678 L361.7218,120.2192 " +
-					"L360.7261,126.3232 L362.8064,125.5221 Z"];         */
-
+				/// The geo data of USA in SVG form
+				obj.paths = county_us_topo_albersUsa_svg_path_list.slice(0, 1705);  // slice for fast prototyping   
 				obj.amounts = Array.from({length: obj.paths.length}, () => Math.floor(Math.random() * 100));
-        colors = [ 0xC07000, 0xC08000, 0xC0A000 ];
-				obj.colors =  Array.from({length: obj.paths.length}, (o, i) => colors[i % colors.length]);
 				obj.center = center;
 
 				return obj;
@@ -600,16 +515,6 @@
         TWEEN.update();
         
         controls.update();
-        
-        //legend.quaternion.copy(camera.quaternion);
-        //legend.lookAt( camera.position );
-        //legend.rotation.copy(camera.rotation);    
-        //sprite.position.subVectors(controls.target, new THREE.Vector3(0, 0, 100));   
-        
-        //sprite.position.set( 0, 0, 900 - camera.position.z );   
-        //var scale = sprite.position.distanceTo(camera.position) / 900;
-        //scale = 1 / camera.zoom; //Math.min(100, Math.max(0, scale));
-        //sprite.scale.set(scale * 50 , scale * 500, scale); 
         
         render();
 
@@ -648,101 +553,24 @@
         if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
             amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);
             clr = lut.getColor(amnt);
-        }
-         
+        }           
      
-            new TWEEN.Tween(mesh.material.color)
+        new TWEEN.Tween(mesh.material.color)
             .to(clr, 1000)
             .easing(TWEEN.Easing.Quartic.Out)
             .start(); 
-            new TWEEN.Tween(mesh.material.emissive)
+        new TWEEN.Tween(mesh.material.emissive)
             .to(clr, 1000)
             .easing(TWEEN.Easing.Quartic.Out)
             .start();        
                   
-            /*var data = {
-        			amount: amnt,
-        			bevelEnabled: false,
-        		};   
-            updateGroupGeometry( mesh,
-      				new THREE.ExtrudeBufferGeometry( pathShapes[i], data), amnt
-      			);   */
-        
-        
-       /* for (let j of [...mesh.geometry.attributes.position.array.keys()]) {
-              if ((j + 1)%3 == 0 && mesh.geometry.attributes.position.array[j] != 0) {
-                //var curVerZ = {value: mesh.geometry.attributes.position.array[j]};
-                //var newVerZ = {value: amnt};
-                new TWEEN.Tween({value: mesh.geometry.attributes.position.array[j]}).to({value: amnt}, 1000).easing(TWEEN.Easing.Sinusoidal.InOut)
-                .onUpdate(function(object) {
-                    mesh.geometry.attributes.position.array[j] = object.value;
-                   mesh.geometry.attributes.position.needsUpdate = true;
-                })
-                .start();   
-                //mesh.geometry.attributes.position.array[i] = amnt;                
-              }                   
-          };     */
-          //mesh.geometry.attributes.position.needsUpdate = true;
-                     //await sleep(1000);
-                  //mesh.geometry.attributes.position.needsUpdate != true
-          //var curZ = {value: mesh.position.z};
-          //var newZ = {value: amnt + 1};
-          new TWEEN.Tween(mesh.position).to({z: amnt + 1}, 1000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
-  /*        zTween.onUpdate(function() {
-            mesh.position.z = curZ.value;
-          });   */
-          //zTween.start();
+        new TWEEN.Tween(mesh.position)
+            .to({z: amnt + 1}, 1000)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .start();
 
          } 
-      /*    
-            for (let [i, mesh] of group.children[0].geometry.attributes.position.array.entries()) {
-if ((i + 1)%3 == 0 && group.children[0].geometry.attributes.position.array[i] == 99) group.children[0].geometry.attributes.position.array[i] = 50;}
-            
-      };
-                   */
-    /*
-      new TWEEN.Tween(mesh.material.color.getHSV())
-        .to({h: h, s: s, v: v}, 200)
-        .easing(TWEEN.Easing.Quartic.In)
-        .onUpdate(
-            function()
-            {
-                mesh.material.color.setHSV(this.h, this.s, this.v);
-            }
-        )
-        .start();  */
-    }
-    
-/*    function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}       */
-    
-    // taken from https://threejs.org/docs/#api/geometries/ExtrudeBufferGeometry
-    /*function updateGroupGeometry( mesh, geometry, amount) {       
-    	mesh.geometry.dispose();
-      //mesh.geometry = null;
-    	mesh.geometry = geometry;
-			//mesh.rotation.x = Math.PI;
-			//mesh.translateZ( - amount - 1 );
-			//mesh.translateX( - center.x );
-			//mesh.translateY( - center.y );         
-    }      */
-    function updateGroupGeometry( mesh, geometry, amount ) {  
-    
-	mesh.children[ 0 ].geometry.dispose();
-	mesh.children[ 1 ].geometry.dispose();
-
-	mesh.children[ 0 ].geometry = new THREE.WireframeGeometry( geometry );
-	mesh.children[ 1 ].geometry = geometry;
-  //mesh.children[ 0 ].rotation.x = Math.PI;
- // mesh.children[ 1 ].rotation.x = Math.PI;
- //mesh.children[ 0 ].translateZ( - amount - 1 );
-  //mesh.children[ 1 ].translateZ( - amount - 1 );
-	// these do not update nicely together if shared
-
-}
-    
-    
+    }    
 
 		</script>
 
