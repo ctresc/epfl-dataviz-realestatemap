@@ -457,29 +457,15 @@
 				var obj = initSVGObject();
 				addGeoObject( group, obj );    
                
-        /* WORK IN PROGRESS
         var loader = new THREE.TextureLoader();
         loader.setCrossOrigin("");
-        loader.load( "data/NewTux.svg", function(mapBase)
+        loader.load( "data/albersUsa.svg", function(mapBase)
         {                 
-        //mapBase.wrapS = mapBase.wrapT = THREE.RepeatWrapping;
-				mapBase.repeat.set( 0.0005, 0.0005 );
-        //mapBase.center.set(0.5, 0.5);
-        mapBase.flipY = false;
-        //mapBase.rotation = Math.PI /4;
-            mapBase.needsUpdate = true;
-            var mapBaseGeometry = new THREE.ShapeBufferGeometry( mapShape ); // new THREE.PlaneGeometry( 1000, 1000, 1, 1);                  // 
-            var mapBaseMaterial = new THREE.MeshPhongMaterial( { map: mapBase, fog: false} ); 
-
-            //mapBaseMaterial.map.minFilter = THREE.LinearFilter;
+            var mapBaseGeometry = new THREE.PlaneGeometry( 1024, 1024, 1, 1);
+            var mapBaseMaterial = new THREE.MeshBasicMaterial( { map: mapBase, fog: false, side: THREE.DoubleSide} ); 
             var mapBaseMesh = new THREE.Mesh( mapBaseGeometry, mapBaseMaterial ); 
-            //mapBaseSprite = new THREE.Sprite( mapBaseMaterial ); 
+            mapBaseMesh.position.set(512 - center.x, -512 + center.y, 1);
             scene.add( mapBaseMesh );
-            //mapBaseSprite.scale.set(100, 100, 10);
-            mapBaseMesh.rotation.x = Math.PI;
-						//mesh.translateZ( - amount - 1 );
-						mapBaseMesh.translateX( - center.x );
-						mapBaseMesh.translateY( - center.y ); 
             console.log( 'Loaded' );
         },
       	// Function called when download progresses
@@ -489,7 +475,7 @@
       	// Function called when download errors
       	function ( xhr ) {
       		console.error( 'An error happened' );
-      	});     */
+      	});     
         
         legend = lut.setLegendOn( { 'layout':'vertical', position: { x: window.innerWidth / 4, y: -window.innerHeight / 25, z: 1 } , dimensions: { width: 50, height: 500 }}); 
         sceneOverlay.add(legend);
