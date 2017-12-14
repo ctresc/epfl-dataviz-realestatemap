@@ -29,24 +29,32 @@
 		</style>
 	</head>
 
-	<body>      
+	<body> 
 		<div id="container"></div>
 		<div id="info">
 			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - Shapes Extrusion via Geo Data
 		</div>
     <div style="top:50px; position:absolute;">
       <a onclick="panCam(0,0,1000,1000);">2D</a><-><a onclick="panCam(0,-450,1000,1000);">3D</a>
-      <br><a onclick="step();">Step</a>
+    </div>
+    <div style="position:fixed;bottom:0px;width:100%;">
+      <div id="slider"></div>
     </div>
 
+
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
 		<script type="text/javascript" src="build/three.js"></script>
 		<script src="js/controls/OrbitControls.js"></script>
 		<script src="js/libs/stats.min.js"></script>
     <script src="js/libs/Tween.js"></script>
     <script src="js/math/Lut.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
     <script src="js/d3-color.v1.min.js"></script>
     <script src="js/d3-interpolate.v1.min.js"></script>
     <script src="js/d3-scale-chromatic.v1.min.js"></script>  
+    <script src="js/chroniton-only.js"></script>
     
     <script src="data/county_us_topo_albersUsa.js"></script>
 
@@ -299,31 +307,28 @@
 
 				var paths = svgObject.paths;
 				var amounts = svgObject.amounts;
-				var center = svgObject.center;
-        
-        var cmaps = [ 'rainbow', 'cooltowarm', 'blackbody', 'grayscale' ];
-        var colorNumbers = ['16', '128', '256', '512' ];
-        
-        lut = new THREE.Lut( cmaps[3], 512 );
-        tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index / 511.0)).getHexString())]);
-        lut.addColorMap('rdylgn', tmp); 
-        lut = lut.changeColorMap('rdylgn');
-				lut.setMax( max_amount );
-				lut.setMin( 0 );                  
+				var center = svgObject.center;             
 
-        pathShapes = []
+        pathShapes = [];
+        mapShape = [];
         var k = 0;
 				for ( var i = 0; i < paths.length; i ++ ) {
-
+          if(i <= 1705) {
+					     var amount = amounts[ i ];
+          } else {
+               var amount = 0;
+          }
+          
 					var path = $d3g.transformSVGPath( paths[ i ] );              
-          var color =  lut.getColor( amounts[i] );
+          var color =  lut.getColor( amount );
            
 					var material = new THREE.MeshLambertMaterial( {
 						color: color,
 						emissive: color,
 					} );
-					var amount = amounts[ i ];
+
 					var simpleShapes = path.toShapes( true );
+          mapShape = [...mapShape, ...simpleShapes];
 
 					for ( var j = 0; j < simpleShapes.length; j ++ ) {
 
@@ -357,6 +362,9 @@
 			};
 
 			var renderer, stats, scene, camera;
+      width = 960, height = 580, attributeArray = [], currentAttribute = 0;
+      var tweenGroup2D3D = new TWEEN.Group();
+      
 
 			init();
 			animate();
@@ -367,6 +375,7 @@
 
 				var container = document.getElementById( 'container' );
 
+        loadData();
         max_amount = 100;
 				//
 
@@ -410,7 +419,7 @@
         floorMesh5.position.set(450, -300, -max_amount/2);
         floorMesh5.rotation.x = Math.PI / 2;
         floorMesh5.rotation.y = Math.PI / 2;
-        scene.add( floorMesh5 );
+        scene.add( floorMesh5 );         
         /****************************************/ 
 
         cameraOverlay = new THREE.OrthographicCamera( window.innerWidth / -2, window.innerWidth /2, window.innerHeight / 2, window.innerHeight / -2, 1, 10 );
@@ -431,11 +440,56 @@
 				scene.add( ambientLight );
 
 				//
-        
         center = { x: 455, y: 205 };
-				var obj = initSVGObject();
-				addGeoObject( group, obj );
         
+       
+        var cmaps = [ 'rainbow', 'cooltowarm', 'blackbody', 'grayscale' ];
+        var colorNumbers = ['16', '128', '256', '512' ];
+        
+        lut = new THREE.Lut( cmaps[3], 512 );
+        tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index / 511.0)).getHexString())]);
+        lut.addColorMap('rdylgn', tmp); 
+        lut = lut.changeColorMap('rdylgn');
+				lut.setMax( max_amount );
+				lut.setMin( 0 );     
+        
+        
+				var obj = initSVGObject();
+				addGeoObject( group, obj );    
+               
+        /* WORK IN PROGRESS
+        var loader = new THREE.TextureLoader();
+        loader.setCrossOrigin("");
+        loader.load( "data/NewTux.svg", function(mapBase)
+        {                 
+        //mapBase.wrapS = mapBase.wrapT = THREE.RepeatWrapping;
+				mapBase.repeat.set( 0.0005, 0.0005 );
+        //mapBase.center.set(0.5, 0.5);
+        mapBase.flipY = false;
+        //mapBase.rotation = Math.PI /4;
+            mapBase.needsUpdate = true;
+            var mapBaseGeometry = new THREE.ShapeBufferGeometry( mapShape ); // new THREE.PlaneGeometry( 1000, 1000, 1, 1);                  // 
+            var mapBaseMaterial = new THREE.MeshPhongMaterial( { map: mapBase, fog: false} ); 
+
+            //mapBaseMaterial.map.minFilter = THREE.LinearFilter;
+            var mapBaseMesh = new THREE.Mesh( mapBaseGeometry, mapBaseMaterial ); 
+            //mapBaseSprite = new THREE.Sprite( mapBaseMaterial ); 
+            scene.add( mapBaseMesh );
+            //mapBaseSprite.scale.set(100, 100, 10);
+            mapBaseMesh.rotation.x = Math.PI;
+						//mesh.translateZ( - amount - 1 );
+						mapBaseMesh.translateX( - center.x );
+						mapBaseMesh.translateY( - center.y ); 
+            console.log( 'Loaded' );
+        },
+      	// Function called when download progresses
+      	function ( xhr ) {
+      		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+      	},
+      	// Function called when download errors
+      	function ( xhr ) {
+      		console.error( 'An error happened' );
+      	});     */
         
         legend = lut.setLegendOn( { 'layout':'vertical', position: { x: window.innerWidth / 4, y: -window.innerHeight / 25, z: 1 } , dimensions: { width: 50, height: 500 }}); 
         sceneOverlay.add(legend);
@@ -449,7 +503,7 @@
 					sceneOverlay.add ( labels[ 'ticks' ][ i ] );  
           labels[ 'ticks' ][ i ].scale.set(labels[ 'ticks' ][ i ].scale.x * 100, labels[ 'ticks' ][ i ].scale.y * 100, labels[ 'ticks' ][ i ].scale.z);        
           labels['ticks'][i].position.set(labels['ticks'][i].position.x, labels[ 'ticks' ][ i ].position.y + labels['ticks'][i].scale.y /4 - 2, labels['ticks'][i].position.z);
-				}    
+				}           
                                                                                                                   
 				//
 
@@ -513,6 +567,7 @@
 				stats.update();
         
         TWEEN.update();
+        tweenGroup2D3D.update();
         
         controls.update();
         
@@ -527,18 +582,18 @@
 				renderer.render( sceneOverlay, cameraOverlay );
 			}
             
-    // from https://stackoverflow.com/questions/38395589/is-it-possible-to-tween-orbit-controls-with-three-js
+    // from https://stackoverflow.com/questions/38395589/is-it-possible-to-tween-orbit-controls-with-three-js     
     function panCam(xTarget,yTarget,zTarget,tweenDuration){
 
-          TWEEN.removeAll();
+          tweenGroup2D3D.removeAll();
 
           var camNewPosition= { x : xTarget, y : yTarget, z : zTarget};
-          var camPosTween = new TWEEN.Tween(camera.position).to(camNewPosition, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          var camPosTween = new TWEEN.Tween(camera.position, tweenGroup2D3D).to(camNewPosition, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
           var controlsPosTween = new TWEEN.Tween(controls.target).to({x: 0, y: 0, z:0}, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
-          var camRotTween = new TWEEN.Tween(camera.rotation).to(cameraInitialRotation, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+          var camRotTween = new TWEEN.Tween(camera.rotation, tweenGroup2D3D).to(cameraInitialRotation, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut).start();
           var curZoom = {value: camera.zoom};
           var newZoom = {value: 1};
-          var camZoomTween = new TWEEN.Tween(curZoom).to(newZoom, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut);
+          var camZoomTween = new TWEEN.Tween(curZoom, tweenGroup2D3D).to(newZoom, tweenDuration).easing(TWEEN.Easing.Sinusoidal.InOut);
           camZoomTween.onUpdate(function() {
             camera.zoom = curZoom.value;
           });
@@ -553,7 +608,8 @@
         if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
             amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);
             clr = lut.getColor(amnt);
-        }           
+        }      
+        if(pathShapes[i-1] == 1705) break;     
      
         new TWEEN.Tween(mesh.material.color)
             .to(clr, 1000)
@@ -571,6 +627,64 @@
 
          } 
     }    
+    
+    function loadData() {
+    
+        queue()   // queue function loads all external data files asynchronously
+            .defer(d3.json, "data/county_us_topo.json")  // our geometries
+            .defer(d3.csv, "data/County_Zhvi_AllHomes_Formatted.csv")  // and associated data in csv file
+            .await(processData);   // once all files are loaded, call the processData function passing
+        // the loaded objects as arguments
+    }
+    
+    function processData(error, counties, timeData) {
+        // function accepts any errors from the queue function as first argument, then
+        // each data object in the order of chained defer() methods above
+    
+        var county_geo = counties.objects.county.geometries;  // store the path in variable for ease
+        for (var i in county_geo) {    // for each geometry object
+            for (var j in timeData) {  // for each row in the CSV
+                if (county_geo[i].id == timeData[j]['CountyCodeFIPS']) {   // if they match
+                    for (var k in timeData[0]) {   // for each column in the a row within the CSV
+                        stringTypeProperties = ['Idx', 'CountyCodeFIPS', 'RegionName', 'State', 'Metro', 'SizeRank'];
+    
+                        if (!stringTypeProperties.includes(k)) {  // let's not add the name or id as props since we already have them
+                            if (attributeArray.indexOf(k) == -1) {
+                                attributeArray.push(k);  // add new column headings to our array for later
+                            }
+    
+                            county_geo[i].properties[k] = Number(timeData[j][k]); // add each CSV column key/value to geometry object
+                        }
+                    }
+                    break;  // stop looking through the CSV since we made our match
+                }
+            }
+        }
+        d3.select('#clock').html(attributeArray[currentAttribute]);  // populate the clock initially with the current year
+        //drawMap(counties);  // let's mug the map now with our newly populated data object
+        animateMap();
+    }                   
+    
+    function animateMap() {
+        var dateFormat = d3.time.format("%Y-%m");
+    
+        d3.select("#slider")
+            .call(chroniton()
+                .domain([dateFormat.parse(attributeArray[0]), dateFormat.parse(attributeArray[attributeArray.length - 1])])
+                .labelFormat(d3.time.format('%Y-%m'))
+                .width(width)
+                .playButton(true) 
+                .loop(false) // can also be set to loop
+                .playbackRate(0.1) // 1.00 = 10px?
+                .on("change", function (d) {
+                    filterValue = dateFormat(d);
+                    currentAttribute = attributeArray.indexOf(filterValue);
+                    //sequenceMap();                   
+                    step();
+                })
+            );
+    }
+
 
 		</script>
 
