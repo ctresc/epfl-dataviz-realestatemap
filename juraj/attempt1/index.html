@@ -313,7 +313,7 @@
         mapShape = [];
         var k = 0;
 				for ( var i = 0; i < paths.length; i ++ ) {
-          if(i <= 1705) {
+          if(i <= 1705) { // TODO remove
 					     var amount = amounts[ i ];
           } else {
                var amount = 0;
@@ -392,7 +392,7 @@
         scene.add(camera);          
         
         /******** TO HIDE A LITTLE HACK **********/ 
-        var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xb0b0b0, side: THREE.DoubleSide } );
+        /var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xb0b0b0, side: THREE.DoubleSide } );
         
         var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount, 1, 1);
         //var floorMaterial2 = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
@@ -419,6 +419,7 @@
         scene.add( floorMesh5 );         
         /****************************************/ 
 
+        /*  TODO - new camera really necessary? */
         cameraOverlay = new THREE.OrthographicCamera( window.innerWidth / -2, window.innerWidth /2, window.innerHeight / 2, window.innerHeight / -2, 1, 10 );
 				cameraOverlay.position.set( 0, 0, 10 );    
         sceneOverlay.add(cameraOverlay);
@@ -476,7 +477,7 @@
         
         legend = lut.setLegendOn( { 'layout':'vertical', position: { x: window.innerWidth / 4, y: -window.innerHeight / 25, z: 1 } , dimensions: { width: 50, height: 500 }}); 
         sceneOverlay.add(legend);
-        labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5 });
+        labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5 }); // TODO fontface
         sceneOverlay.add ( labels['title'] );
         labels['title'].scale.set(labels['title'].scale.x * 100, labels['title'].scale.y * 100, labels['title'].scale.z);
  				labels['title'].position.set(lut.legend.position.x/* + lut.legend.dimensions.width */, labels['title'].position.y, labels['title'].position.z);
@@ -533,7 +534,7 @@
 			}
 
 			function onWindowResize() {
-
+        // TODO finish
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
@@ -584,12 +585,12 @@
     }
     
     function step() {
-    
-      var amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);
+      
+      var amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);     // TODO plug in real data here
       var clr = lut.getColor(amnt);
       for (let [i, mesh] of group.children.entries()) {
         if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
-            amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);
+            amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);    // TODO plug in real data here
             clr = lut.getColor(amnt);
         }      
         if(pathShapes[i-1] == 1705) break;     
