@@ -464,7 +464,7 @@
             var mapBaseGeometry = new THREE.PlaneGeometry( 1024, 1024, 1, 1);
             var mapBaseMaterial = new THREE.MeshBasicMaterial( { map: mapBase, fog: false, side: THREE.DoubleSide} ); 
             var mapBaseMesh = new THREE.Mesh( mapBaseGeometry, mapBaseMaterial ); 
-            mapBaseMesh.position.set(512 - center.x, -512 + center.y, 1);
+            mapBaseMesh.position.set(512 - center.x, -512 + center.y, 0);
             scene.add( mapBaseMesh );
             console.log( 'Loaded' );
         },
