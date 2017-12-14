@@ -71,6 +71,7 @@ function chroniton() {
       brush.x(xScale)
         .extent([domain[0], domain[0]])
         .on('brush', brushed);
+        
 
       var svg = d3.select(this)
         .selectAll('svg').data([0]);
@@ -159,6 +160,7 @@ function chroniton() {
         slider.classed('brushing', true);
       }).on('brushend', function() {
         slider.classed('brushing', false);
+        brush_done();
       });
 
       function setValue(value, transition) {
@@ -204,9 +206,12 @@ function chroniton() {
           } else {
             return 'translate(' + [xScale(value) - textRadius, 20] + ')';
           }
-        });
-
-        events.change(value);
+        });          
+      }
+      
+      function brush_done() {
+          var value = brush.extent()[0];
+          events.change(value);
       }
     });
   }
