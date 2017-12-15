@@ -56,7 +56,7 @@
     <script src="js/d3-scale-chromatic.v1.min.js"></script>  
     <script src="js/chroniton-only.js"></script>
     
-    <script src="data/county_us_topo_albersUsa.js"></script>
+    <script src="data/county_us_topo_albersUsa_w_id.js"></script>
 
 		<script>
 			// From d3-threeD.js
@@ -305,22 +305,21 @@
 
 			var addGeoObject = function( group, svgObject ) {
 
-				var paths = svgObject.paths;
-				var amounts = svgObject.amounts;
+				var id_path_pairs = svgObject.id_path_pairs;
 				var center = svgObject.center;             
 
         pathShapes = [];
+        path_to_county_geo = [];
         mapShape = [];
         var k = 0;
-				for ( var i = 0; i < paths.length; i ++ ) {
-          if(i <= 1705) { // TODO remove
-					     var amount = amounts[ i ];
-          } else {
-               var amount = 0;
-          }
+				for ( var i = 0; i < id_path_pairs.length; i ++ ) {
+        
           
-					var path = $d3g.transformSVGPath( paths[ i ] );              
-          var color =  lut.getColor( amount );
+          path_to_county_geo[i] = county_geo.findIndex(function (obj) { return obj.id === id_path_pairs[ i ].id; });
+					var amount = county_geo[path_to_county_geo[i]].properties[attributeArray[currentAttribute]];
+          
+					var path = $d3g.transformSVGPath( id_path_pairs[ i ].path );              
+          var color =  lut.getColor(Math.max(amount, 0));
            
 					var material = new THREE.MeshLambertMaterial( {
 						color: color,
@@ -334,21 +333,14 @@
 
 						pathShapes[k] = i;               
 						var shape3d = new THREE.ExtrudeBufferGeometry( simpleShapes[ j ], {
-							amount: amount,
+							amount: max_amount / factor,
 							bevelEnabled: false
 						} );
                    
 						var mesh = new THREE.Mesh( shape3d, material );
             
-           for (let k of [...mesh.geometry.attributes.position.array.keys()]) {
-              if ((k + 1)%3 == 0 && mesh.geometry.attributes.position.array[k] != 0) {
-                mesh.geometry.attributes.position.array[k] = max_amount;             
-              }                   
-          };
-          mesh.geometry.attributes.position.needsUpdate = true;
-            
 						mesh.rotation.x = Math.PI;
-						mesh.translateZ( - amount - 1 );
+						mesh.translateZ( - amount / factor - 1);
 						mesh.translateX( - center.x );
 						mesh.translateY( - center.y ); 
             
@@ -361,22 +353,18 @@
 
 			};
 
-			var renderer, stats, scene, camera;
-      width = 960, height = 580, attributeArray = [], currentAttribute = 0;
+			var renderer, stats, scene, camera,  max_amount = -Infinity, factor = 10000,  mapBase;
+      width = 960, height = 580, attributeArray = [], currentAttribute = 0; county_geo = [];
       var tweenGroup2D3D = new TWEEN.Group();
       
-
-			init();
-			animate();
-
+      loadData();
+      
 			//
 
 			function init() {
 
-				var container = document.getElementById( 'container' );
+				var container = document.getElementById( 'container' );    
 
-        loadData();
-        max_amount = 100;
 				//
 
 				scene = new THREE.Scene();
@@ -394,26 +382,26 @@
         /******** TO HIDE A LITTLE HACK **********/ 
         var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xb0b0b0, side: THREE.DoubleSide } );
         
-        var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount, 1, 1);
+        var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount / factor, 1, 1);
         //var floorMaterial2 = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
         var floorMesh2 = new THREE.Mesh( floorGeometry2, floorMaterial );  
-        floorMesh2.position.set(0, 200, -max_amount/2);
+        floorMesh2.position.set(0, 200, -max_amount  / factor /2);
         floorMesh2.rotation.x = Math.PI / 2;
         scene.add( floorMesh2 );
         
         var floorMesh3 = new THREE.Mesh( floorGeometry2, floorMaterial );  
-        floorMesh3.position.set(0, -300, -max_amount/2);
+        floorMesh3.position.set(0, -300, -max_amount / factor /2);
         floorMesh3.rotation.x = Math.PI / 2;
         scene.add( floorMesh3 );
         
         var floorMesh4 = new THREE.Mesh( floorGeometry2, floorMaterial );  
-        floorMesh4.position.set(-450, -300, -max_amount/2);
+        floorMesh4.position.set(-450, -300, -max_amount / factor /2);
         floorMesh4.rotation.x = Math.PI / 2;
         floorMesh4.rotation.y = Math.PI / 2;
         scene.add( floorMesh4 );
         
         var floorMesh5 = new THREE.Mesh( floorGeometry2, floorMaterial );  
-        floorMesh5.position.set(450, -300, -max_amount/2);
+        floorMesh5.position.set(450, -300, -max_amount / factor /2);
         floorMesh5.rotation.x = Math.PI / 2;
         floorMesh5.rotation.y = Math.PI / 2;
         scene.add( floorMesh5 );         
@@ -455,25 +443,12 @@
 				var obj = initSVGObject();
 				addGeoObject( group, obj );    
                
-        var loader = new THREE.TextureLoader();
-        loader.setCrossOrigin("");
-        loader.load( "data/albersUsa.svg", function(mapBase)
-        {                 
-            var mapBaseGeometry = new THREE.PlaneGeometry( 1024, 1024, 1, 1);
-            var mapBaseMaterial = new THREE.MeshBasicMaterial( { map: mapBase, fog: false, side: THREE.DoubleSide} ); 
-            var mapBaseMesh = new THREE.Mesh( mapBaseGeometry, mapBaseMaterial ); 
-            mapBaseMesh.position.set(512 - center.x, -512 + center.y, 0);
-            scene.add( mapBaseMesh );
-            console.log( 'Loaded' );
-        },
-      	// Function called when download progresses
-      	function ( xhr ) {
-      		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-      	},
-      	// Function called when download errors
-      	function ( xhr ) {
-      		console.error( 'An error happened' );
-      	});     
+    
+        var mapBaseGeometry = new THREE.PlaneGeometry( 1024, 1024, 1, 1);
+        var mapBaseMaterial = new THREE.MeshBasicMaterial( { map: mapBase, fog: false, side: THREE.DoubleSide} ); 
+        var mapBaseMesh = new THREE.Mesh( mapBaseGeometry, mapBaseMaterial ); 
+        mapBaseMesh.position.set(512 - center.x, -512 + center.y, 0);
+        scene.add( mapBaseMesh );
         
         legend = lut.setLegendOn( { 'layout':'vertical', position: { x: window.innerWidth / 4, y: -window.innerHeight / 25, z: 1 } , dimensions: { width: 50, height: 500 }}); 
         sceneOverlay.add(legend);
@@ -525,8 +500,7 @@
 				var obj = {};
 
 				/// The geo data of USA in SVG form
-				obj.paths = county_us_topo_albersUsa_svg_path_list.slice(0, 1705);  // slice for fast prototyping   
-				obj.amounts = Array.from({length: obj.paths.length}, () => Math.floor(Math.random() * 100));
+				obj.id_path_pairs = county_us_topo_albersUsa_svg_path_list; //.slice(0, 1705);  // slice for fast prototyping   
 				obj.center = center;
 
 				return obj;
@@ -586,14 +560,13 @@
     
     function step() {
       
-      var amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);     // TODO plug in real data here
-      var clr = lut.getColor(amnt);
+      var amnt = county_geo[path_to_county_geo[0]].properties[attributeArray[currentAttribute]];
+      var clr = lut.getColor(Math.max(amnt, 0));
       for (let [i, mesh] of group.children.entries()) {
         if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
-            amnt = Math.max(Math.floor(Math.random() * 100), 0.000001);    // TODO plug in real data here
-            clr = lut.getColor(amnt);
-        }      
-        if(pathShapes[i-1] == 1705) break;     
+            amnt = county_geo[path_to_county_geo[pathShapes[i]]].properties[attributeArray[currentAttribute]];
+            clr = lut.getColor(Math.max(amnt, 0));
+        }           
      
         new TWEEN.Tween(mesh.material.color)
             .to(clr, 1000)
@@ -605,48 +578,80 @@
             .start();        
                   
         new TWEEN.Tween(mesh.position)
-            .to({z: amnt + 1}, 1000)
+            .to({z: amnt / factor + 1}, 1000)
             .easing(TWEEN.Easing.Sinusoidal.InOut)
             .start();
 
-         } 
+      } 
     }    
     
     function loadData() {
     
         queue()   // queue function loads all external data files asynchronously
             .defer(d3.json, "data/county_us_topo.json")  // our geometries
-            .defer(d3.csv, "data/County_Zhvi_AllHomes_Formatted.csv")  // and associated data in csv file
+            .defer(d3.csv, "data/County_Zhvi_AllHomes_Formatted.csv") // and associated data in csv file
             .await(processData);   // once all files are loaded, call the processData function passing
         // the loaded objects as arguments
     }
     
     function processData(error, counties, timeData) {
-        // function accepts any errors from the queue function as first argument, then
-        // each data object in the order of chained defer() methods above
-    
-        var county_geo = counties.objects.county.geometries;  // store the path in variable for ease
-        for (var i in county_geo) {    // for each geometry object
-            for (var j in timeData) {  // for each row in the CSV
-                if (county_geo[i].id == timeData[j]['CountyCodeFIPS']) {   // if they match
-                    for (var k in timeData[0]) {   // for each column in the a row within the CSV
+        var loader = new THREE.TextureLoader();
+        loader.setCrossOrigin("");
+        loader.load( "data/albersUsa.svg", function(obj)
+        {                 
+            mapBase = obj;
+            // function accepts any errors from the queue function as first argument, then
+            // each data object in the order of chained defer() methods above
+            county_geo = counties.objects.county.geometries;  // store the path in variable for ease
+            for (var i in county_geo) {    // for each geometry object
+                var found = false;
+                for (var j in timeData) {  // for each row in the CSV
+                    if (county_geo[i].id == timeData[j]['CountyCodeFIPS']) {   // if they match
+                        for (var k in timeData[0]) {   // for each column in the a row within the CSV
+                            stringTypeProperties = ['Idx', 'CountyCodeFIPS', 'RegionName', 'State', 'Metro', 'SizeRank'];
+        
+                            if (!stringTypeProperties.includes(k)) {  // let's not add the name or id as props since we already have them
+                                if (attributeArray.indexOf(k) == -1) {
+                                    attributeArray.push(k);  // add new column headings to our array for later
+                                }
+                                var currentValue = timeData[j][k] ? Number(timeData[j][k]) : -2 * factor;
+                                if (currentValue > max_amount && currentValue != -99 && currentValue != 'undefined' && currentValue != 0) {
+                                    max_amount = currentValue;
+                                }      
+                                county_geo[i].properties[k] = currentValue; // add each CSV column key/value to geometry object
+                            }
+                        }
+                        found = true;
+                        break;  // stop looking through the CSV since we made our match
+                    }  
+                }
+                if (!found) {
+                    for (var k in timeData[0])  {
                         stringTypeProperties = ['Idx', 'CountyCodeFIPS', 'RegionName', 'State', 'Metro', 'SizeRank'];
-    
+        
                         if (!stringTypeProperties.includes(k)) {  // let's not add the name or id as props since we already have them
                             if (attributeArray.indexOf(k) == -1) {
                                 attributeArray.push(k);  // add new column headings to our array for later
-                            }
-    
-                            county_geo[i].properties[k] = Number(timeData[j][k]); // add each CSV column key/value to geometry object
-                        }
+                            } 
+                            county_geo[i].properties[k] = -2 * factor; // add each CSV column key/value to geometry object
+                        }                
                     }
-                    break;  // stop looking through the CSV since we made our match
                 }
             }
-        }
-        d3.select('#clock').html(attributeArray[currentAttribute]);  // populate the clock initially with the current year
-        //drawMap(counties);  // let's mug the map now with our newly populated data object
-        animateMap();
+            d3.select('#clock').html(attributeArray[currentAttribute]);  // populate the clock initially with the current year
+            
+            init();
+    			  animate();   
+            animateMap();
+        },
+      	// Function called when download progresses
+      	function ( xhr ) {
+      		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+      	},
+      	// Function called when download errors
+      	function ( xhr ) {
+      		console.error( 'An error happened' );
+      	}); 
     }                   
     
     function animateMap() {
@@ -662,13 +667,11 @@
                 .playbackRate(0.1) // 1.00 = 10px?
                 .on("change", function (d) {
                     filterValue = dateFormat(d);
-                    currentAttribute = attributeArray.indexOf(filterValue);
-                    //sequenceMap();                   
+                    currentAttribute = attributeArray.indexOf(filterValue);                
                     step();
                 })
             );
     }
-
 
 		</script>
 
