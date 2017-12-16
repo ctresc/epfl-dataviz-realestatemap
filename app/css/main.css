@@ -1,0 +1,111 @@
+#wrapper {
+    width: 960px;
+    margin: -30px auto 0;
+}
+
+#map {
+    width: 960px;
+    height: 580px;
+    position: relative;
+}
+
+#line-chart {
+  width: 960px;
+  height: 580px;
+  position: relative;
+}
+
+.stroke {
+    fill: none;
+    stroke: #888;
+    stroke-width: 2px;
+}
+
+.fill {
+    fill: #fff;
+}
+
+.graticule {
+    fill: none;
+    stroke: #777;
+    stroke-width: .5px;
+    stroke-opacity: .5;
+}
+
+.land {
+    fill: #222;
+}
+
+.boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-width: .5px;
+}
+
+.county {
+    stroke: white;
+}
+
+.d3-tip {
+    line-height: 1.5;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 0px;
+    text-align: center;
+}
+
+/* SLIDER */
+
+.chroniton text {
+    font-size: 10px;
+    color: gray;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.x.axis, .slider text {
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  user-select:none;
+}
+.x.axis path.domain {
+  stroke-width:10;
+  stroke-linecap:round;
+  stroke:#ddd;
+}
+.x.axis path.halo {
+  stroke-width:12;
+  stroke-linecap:round;
+  stroke:#ccc;
+}
+.tick line {
+  stroke:#d0d0d0;
+  stroke-width:1;
+  transform:translate(0px, -5px);
+}
+.slider .handle {
+  fill: #fff;
+  stroke-width:1;
+  stroke:#333;
+}
+.slider .handle, .slider text {
+  cursor: move;
+  cursor: -webkit-grab;
+  transition:fill 200ms ease-in-out;
+}
+.handle:active, .slider text:active {
+  cursor: move;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+.slider.brushing .handle {
+  fill: #eee;
+}
+.label {
+  font:bold 12px sans-serif;
+}
