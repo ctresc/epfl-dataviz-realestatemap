@@ -1,61 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title>three.js webgl - geometry - extrude shapes from geodata</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-            body {
-                color: #ffffff;
-                font-family: Monospace;
-                font-size: 13px;
-                text-align: center;
-                font-weight: bold;
-                background-color: #000000;
-                margin: 0px;
-                overflow: hidden;
-            }
 
-            #info {
-                position: absolute;
-                top: 0px;
-                width: 100%;
-                padding: 5px;
-            }
+<head>
+    <title>EPFL Data Visualization Project</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
 
-            a {
-                color: #ffffff;
-            }
-		</style>
-	</head>
+<body>
+    <h1 style="position:fixed; top:0px;width:100%">EPFL Data Visualization Project</h1>
+    <div id="info" style="position:fixed;top:200px;width:100%"></div>
+    <div id="container" style="width:50%;height:50%"></div>
+    <div id="toggle" style="top:250px; position:fixed; width:100%;visibility: hidden">
+        <a onclick="panCam(0,0,1000,1000);">2D</a>
+        <->
+        <a onclick="panCam(0,-450,1000,1000);">3D</a>
+    </div>
+    <div style="position:fixed;bottom:0px;width:100%;">
+        <div id="slider"></div>
+    </div>
 
-	<body>
-		<div id="container"></div>
-		<div id="info">EPFL Data Visualization Project</div>
-        <div style="top:50px; position:absolute;">
-          <a onclick="panCam(0,0,1000,1000);">2D</a><-><a onclick="panCam(0,-450,1000,1000);">3D</a>
-        </div>
-        <div style="position:fixed;bottom:0px;width:100%;">
-          <div id="slider"></div>
-        </div>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script type="text/javascript" src="build/three.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <script src="js/libs/stats.min.js"></script>
+    <script src="js/libs/Tween.js"></script>
+    <script src="js/math/Lut.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+    <script src="js/d3-color.v1.min.js"></script>
+    <script src="js/d3-interpolate.v1.min.js"></script>
+    <script src="js/d3-scale-chromatic.v1.min.js"></script>
+    <script src="js/chroniton-only.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
 
-        <link rel="stylesheet" type="text/css" href="css/main.css" />
-        <script type="text/javascript" src="build/three.js"></script>
-        <script src="js/controls/OrbitControls.js"></script>
-        <script src="js/libs/stats.min.js"></script>
-        <script src="js/libs/Tween.js"></script>
-        <script src="js/math/Lut.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js"></script>
-        <script src="http://d3js.org/queue.v1.min.js"></script>
-        <script src="https://d3js.org/d3-timer.v1.min.js"></script>
-        <script src="js/d3-color.v1.min.js"></script>
-        <script src="js/d3-interpolate.v1.min.js"></script>
-        <script src="js/d3-scale-chromatic.v1.min.js"></script>
-        <script src="js/chroniton-only.js"></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
+    <script src="data/county_us_topo_albersUsa_w_id.js"></script>
+    <script src="js/d3threeD.js"></script>
+    <script src="js/index.js"></script>
+</body>
 
-        <script src="data/county_us_topo_albersUsa_w_id.js"></script>
-        <script src="js/d3threeD.js"></script>
-        <script src="js/index.js"></script>
-	</body>
 </html>

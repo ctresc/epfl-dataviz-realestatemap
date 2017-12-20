@@ -6,7 +6,7 @@ var renderer, stats, scene, camera,  max_amount = -Infinity, factor = 10000,  ma
 width = 960, height = 580, attributeArray = [], currentAttribute = 0; county_geo = [];
 var tweenGroup2D3D = new TWEEN.Group();
 var INFO_TITLE = 'US REAL ESTATE PRICES AVERAGED OVER ALL HOMES PER COUNTY';
-var INFO_LOAD = '--- data loading in progress ---';
+var INFO_LOAD = '';
 
 var main = function () {
 
@@ -98,6 +98,10 @@ function processData(error, counties, timeData) {
             // stop spin.js loader
             spinner.stop();
             info.innerHTML = INFO_TITLE;
+
+            // show toggle
+            var toggle = document.getElementById('toggle');
+            toggle.style.visibility = 'visible';
 
             animate();
             animateMap();
