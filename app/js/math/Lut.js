@@ -305,7 +305,7 @@ THREE.Lut.prototype = {
 		this.legend.labels.notation = parameters.hasOwnProperty( 'notation' ) ? parameters[ 'notation' ] : 'standard';
 
 		var backgroundColor = { r: 255, g: 100, b: 100, a: 0.8 };
-		var borderColor =  { r: 255, g: 0, b: 0, a: 1.0 };
+		var borderColor =  { r: 255, g: 255, b: 255, a: 1.0 };
 		var borderThickness = 4;
 
 		var canvasTitle = document.createElement( 'canvas' );
@@ -322,8 +322,7 @@ THREE.Lut.prototype = {
 
 		contextTitle.lineWidth = borderThickness;
 
-		contextTitle.fillStyle = 'rgba( 0, 0, 0, 1.0 )';
-
+		contextTitle.fillStyle = 'rgba( 255, 255, 255, 255 )';
 		contextTitle.fillText( this.legend.labels.title.toString() + this.legend.labels.um.toString(), borderThickness, this.legend.labels.fontsize + borderThickness );
 
 		var txtTitle = new THREE.CanvasTexture( canvasTitle );
@@ -402,7 +401,7 @@ THREE.Lut.prototype = {
 
 				contextTick.lineWidth = borderThickness;
 
-				contextTick.fillStyle = 'rgba( 0, 0, 0, 1.0 )';
+				contextTick.fillStyle = 'rgba( 255, 255, 255, 255 )';
 
 				contextTick.fillText( value.toString(), borderThickness, this.legend.labels.fontsize + borderThickness );
 
@@ -449,7 +448,7 @@ THREE.Lut.prototype = {
 
 				}
 
-				var material = new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 2 } );
+				var material = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 2 } );
 
 				var geometry = new THREE.Geometry();
 
