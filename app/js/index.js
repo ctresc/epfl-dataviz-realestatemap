@@ -2,14 +2,15 @@ var $d3g = {};
 d3threeD( $d3g ); // imported over script tag d3threeD.js
 
 // GLOBALS
-var renderer, stats, scene, camera,  max_amount = -Infinity, factor = 10000,  mapBase;
-width = 960, height = 580, attributeArray = [], currentAttribute = 0; county_geo = [];
+var renderer, stats, scene, camera,  max_amount = -Infinity, factor = 10000,  mapBase,
+scale = 0.8, width, height, attributeArray = [], currentAttribute = 0; county_geo = [];
 var tweenGroup2D3D = new TWEEN.Group();
 var INFO_TITLE = 'US REAL ESTATE PRICES AVERAGED OVER ALL HOMES PER COUNTY';
 var INFO_LOAD = '';
 
 var main = function () {
-
+    width = window.innerWidth * scale;
+    height = window.innerHeight * scale;
     loadData();
 }
 
@@ -23,7 +24,7 @@ var opts = {
     length: 25, // The length of each line
     width: 8, // The line thickness
     radius: 34, // The radius of the inner circle
-    color: '#61cee4', // #rgb or #rrggbb or array of colors
+    color: '#ffffff', // #rgb or #rrggbb or array of colors
     speed: 1.9, // Rounds per second
     trail: 40, // Afterglow percentage
     className: 'spinner', // The CSS class to assign to the spinner
@@ -123,19 +124,19 @@ function init() {
     var container = document.getElementById( 'container' );
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xb0b0b0 );
+    scene.background = new THREE.Color( 0x333333 );
 
     sceneOverlay = new THREE.Scene();
 
     //
 
     // camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 2000 );
-    camera = new THREE.OrthographicCamera( window.innerWidth / -2, window.innerWidth /2, window.innerHeight / 2, window.innerHeight / -2, 1, 2000 );
+    camera = new THREE.OrthographicCamera( width / -2, width /2, height / 2, height / -2, 1, 2000 );
     camera.position.set( 0, -450, 1000 );
     scene.add(camera);
 
     /******** TO HIDE A LITTLE HACK **********/
-    var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xb0b0b0, side: THREE.DoubleSide } );
+    var floorMaterial = new THREE.MeshBasicMaterial( { color: 0x333333, side: THREE.DoubleSide } );
 
     var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount / factor, 1, 1);
     //var floorMaterial2 = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
@@ -163,7 +164,7 @@ function init() {
     /****************************************/
 
     /*  TODO - new camera really necessary? */
-    cameraOverlay = new THREE.OrthographicCamera( window.innerWidth / -2, window.innerWidth /2, window.innerHeight / 2, window.innerHeight / -2, 1, 10 );
+    cameraOverlay = new THREE.OrthographicCamera( width / -2, width /2, height / 2, height / -2, 1, 10 );
     cameraOverlay.position.set( 0, 0, 10 );
     sceneOverlay.add(cameraOverlay);
     //
@@ -185,12 +186,17 @@ function init() {
 
 
     var cmaps = [ 'rainbow', 'cooltowarm', 'blackbody', 'grayscale' ];
-    var colorNumbers = ['16', '128', '256', '512' ];
+    // var colorNumbers = ['16', '128', '256', '512' ];
+    var colorBrewer5CatMap = ['#fef0d9','#fdcc8a','#fc8d59','#e34a33','#b30000'];
 
     lut = new THREE.Lut( cmaps[3], 512 );
     tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index / 511.0)).getHexString())]);
     lut.addColorMap('rdylgn', tmp);
     lut = lut.changeColorMap('rdylgn');
+    // ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']
+    // var colorBrewerMap = [ [ 0.0, '0xffffb2' ], [ 0.2, '0xfecc5c' ], [ 0.5, '0xfd8d3c' ], [ 0.8, '0xf03b20' ],  [ 1.0, '0xbd0026' ] ];
+    // lut.addColorMap('colorBrewerMap', colorBrewerMap);
+    // lut = lut.changeColorMap('colorBrewerMap');
     lut.setMax( max_amount );
     lut.setMin( 0 );
 
@@ -205,9 +211,9 @@ function init() {
     mapBaseMesh.position.set(512 - center.x, -512 + center.y, 0);
     scene.add( mapBaseMesh );
 
-    legend = lut.setLegendOn( { 'layout':'vertical', position: { x: window.innerWidth / 4, y: -window.innerHeight / 25, z: 1 } , dimensions: { width: 50, height: 500 }});
+    legend = lut.setLegendOn( { 'layout':'vertical', position: { x: 650, y: -height / 25, z: 1 } , dimensions: { width: 50, height: height/2 }});
     sceneOverlay.add(legend);
-    labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5 }); // TODO fontface
+    labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5, 'fontface': 'Helvetica'});
     sceneOverlay.add ( labels['title'] );
     labels['title'].scale.set(labels['title'].scale.x * 100, labels['title'].scale.y * 100, labels['title'].scale.z);
     labels['title'].position.set(lut.legend.position.x/* + lut.legend.dimensions.width */, labels['title'].position.y, labels['title'].position.z);
@@ -224,9 +230,8 @@ function init() {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.autoClear = false; // To allow render overlay on top of sprited sphere
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( width, height );
     container.appendChild( renderer.domElement );
-
 
     //
 
@@ -388,11 +393,13 @@ function step() {
 }
 
 function onWindowResize() {
-    // TODO finish
-    camera.aspect = window.innerWidth / window.innerHeight;
+    // Works
+    width = window.innerWidth * scale;
+    height = window.innerHeight * scale;
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( width, height );
 
 }
 

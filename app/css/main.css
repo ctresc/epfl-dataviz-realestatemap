@@ -1,19 +1,42 @@
 body {
   color: #ffffff;
-  font-family: Monospace;
+  font-family: "Helvetica";
   font-size: 13px;
   text-align: center;
-  font-weight: bold;
-  background-color: #000000;
+  font-weight: 200;
+  background-color: #333333;
   margin: 0px;
   overflow: hidden;
 }
 
+#container {
+  width: 80%;
+  height: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  position: static; /* fixed or static */
+}
+
+#bar{
+  margin-left: 10%;
+  margin-right: auto;
+  display: block;
+  margin-top: 100px;
+}
+
 #info {
-  position: absolute;
-  top: 0px;
-  width: 100%;
+  display: inline-block;
   padding: 5px;
+  font-family: "Helvetica";
+  font-size: 23px;
+  text-align: center;
+  font-weight: 200;
+  width: 60%;
+  position: static;
+}
+
+#toggle{
+  width: 10%;
 }
 
 a {
@@ -87,7 +110,7 @@ a {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: #fff;
   shape-rendering: crispEdges;
 }
 .x.axis, .slider text {
@@ -113,7 +136,7 @@ a {
 .slider .handle {
   fill: #fff;
   stroke-width:1;
-  stroke:#333;
+  stroke:#000;
 }
 .slider .handle, .slider text {
   cursor: move;

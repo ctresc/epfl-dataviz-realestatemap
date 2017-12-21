@@ -9,17 +9,31 @@
 
 <body>
     <h1 style="position:fixed; top:0px;width:100%">EPFL Data Visualization Project</h1>
-    <div id="info" style="position:fixed;top:200px;width:100%"></div>
-    <div id="container" style="width:50%;height:50%"></div>
-    <div id="toggle" style="top:250px; position:fixed; width:100%;visibility: hidden">
-        <a onclick="panCam(0,0,1000,1000);">2D</a>
-        <->
-        <a onclick="panCam(0,-450,1000,1000);">3D</a>
+
+    <div id="bar">
+        <div id="info"></div>
+
+        <div id="toggle" style="visibility: hidden" class="btn-group" data-toggle="buttons">
+            <label class="btn btn-secondary">
+                <a onclick="panCam(0,0,1000,1000);">
+                    <input type="radio" name="options" id="2D"> 2D</a>
+            </label>
+            <label class="btn btn-secondary">
+                <a onclick="panCam(0,-450,1000,1000);">
+                    <input type="radio" name="options" id="3D"> 3D</a>
+            </label>
+        </div>
+
     </div>
+    <div id="container"></div>
+    
+
     <div style="position:fixed;bottom:0px;width:100%;">
         <div id="slider"></div>
     </div>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
+        crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <script type="text/javascript" src="build/three.js"></script>
     <script src="js/controls/OrbitControls.js"></script>
@@ -34,6 +48,8 @@
     <script src="js/d3-scale-chromatic.v1.min.js"></script>
     <script src="js/chroniton-only.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
 
     <script src="data/county_us_topo_albersUsa_w_id.js"></script>
     <script src="js/d3threeD.js"></script>
