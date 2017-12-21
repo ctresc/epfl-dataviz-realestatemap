@@ -74,3 +74,20 @@ In our third - final - design we settled on using D3.js alongside a dedicated 3D
 *What did you learn about the data by using your visualizations? How did you answer your questions? How well does your visualization work, and how could you further improve it?*
 
 Being inspired by the provided NYC population map, initially we wished to visualize each zip code, however due to performance issues we settled on using counties instead. Zip code TopoJson simply consists of way too many arcs and any transformations are CPU intensive resulting in chopped animations. 
+
+## Peer Assessment
+
+### Mateusz Paluchowski
+
+- Preparation – were they prepared during team meetings?    
+   Both Juraj and Christian were always ready for the team meetings and have prepared beforehand such that any issues which were needed to be discussed, were resolved at hand without the need to explain anything.
+   
+- Contribution – did they contribute productively to the team discussion and work?    
+   Christian was extremely helpful and contributed a great deal with both dataset knowledge and D3 expertise.
+   Juraj proved to be irreplacable particularly when it comes to Three.js code and general development know-how.
+   
+- Respect for others’ ideas – did they encourage others to contribute their ideas?    
+   We had many different visions and initial ideas, yet we still managed to convarge tow a mutual goal. Noone was ever disrespectful or hostile towards others and their ideas.
+   
+- Flexibility – were they flexible when disagreements occurred?    
+   Without flexibility we would have not manage to finish this project at all simple because how different initial visions everyone had.
