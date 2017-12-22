@@ -1,4 +1,5 @@
 # Data Visualization: Real Estate Map Project
+# PROCESS BOOK
 
 Process Book of Data visualization project at EPFL involving US housing market data.
 
