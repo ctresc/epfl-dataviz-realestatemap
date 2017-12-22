@@ -19,14 +19,23 @@ Screencast:
 
 ##### Table of Contents
 [Overview](#Overview)
+
 [Motivation](#Motivation)
+
 [Target Audience](#Target_audience)
+
 [Related Work and Inspiration](#Related_work_and_inspiration)
+
 [Questions To Answer](#Questions_to_answer)
+
 [Dataset](#Dataset)
+
 [Exploratory Data Analysis](#Exploratory_data_analysis)
+
 [Designs & Deviations](#Designs_&_Deviations)
+
 [Implementation](#Implementation)
+
 [Evaluation](#Evaluation)
 
 
