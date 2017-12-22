@@ -14,7 +14,7 @@ Visualization:
 ![Final Visualization](FinalViz.jpg)
 
 Screencast:
-[Screencast - Real Estate Map Project](https://vimeo.com/248517643)
+[Screencast - Real Estate Map Project](https://youtu.be/CKEo2iIZF9k)
 
 ![Final Screencast](Screencast_picture.png)
 
