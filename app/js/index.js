@@ -105,7 +105,26 @@ function processData(error, counties, timeData) {
             toggle.style.visibility = 'visible';
 
             animate();
-            animateMap();
+
+            var opTween = new TWEEN.Tween(mapBaseMaterial)
+                    .to({opacity: 1}, 1500)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .onComplete(function(){
+                            var amnt = county_geo[path_to_county_geo[0]].properties[attributeArray[currentAttribute]];
+                            for (let [i, mesh] of group.children.entries()) {
+                                if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
+                                    amnt = county_geo[path_to_county_geo[pathShapes[i]]].properties[attributeArray[currentAttribute]];
+                                    clr = lut.getColor(Math.max(amnt, 0));
+                                }                          
+                                new TWEEN.Tween(mesh.position)
+                                    .to({z: amnt / factor + 1}, 2500)
+                                    .easing(TWEEN.Easing.Sinusoidal.InOut)
+                                    .delay(Math.floor(Math.random() * 2500))
+                                    .start();                           
+                            }
+                    })
+                    .start();
+            //animateMap();
         },
         // Function called when download progresses
         function ( xhr ) {
@@ -207,9 +226,11 @@ function init() {
 
 
     var mapBaseGeometry = new THREE.PlaneGeometry( 1024, 1024, 1, 1);
-    var mapBaseMaterial = new THREE.MeshBasicMaterial( { map: mapBase, fog: false, side: THREE.DoubleSide} );
+    mapBaseMaterial = new THREE.MeshBasicMaterial( { map: mapBase, fog: false, side: THREE.DoubleSide} );
     var mapBaseMesh = new THREE.Mesh( mapBaseGeometry, mapBaseMaterial );
     mapBaseMesh.position.set(512 - center.x, -512 + center.y, 0);
+    mapBaseMaterial.transparent = true;
+    mapBaseMaterial.opacity = 0;
     scene.add( mapBaseMesh );
 
     legend = lut.setLegendOn( { 'layout':'vertical', position: { x: 650, y: -height / 25, z: 1 } , dimensions: { width: 50, height: height/2 }});
@@ -295,8 +316,8 @@ var addGeoObject = function( group, svgObject ) {
 
             var mesh = new THREE.Mesh( shape3d, material );
 
-            mesh.rotation.x = Math.PI;
-            mesh.translateZ( - amount / factor - 1);
+            mesh.rotation.x = Math.PI;              
+            mesh.translateZ( - amount / factor - 1 - (amount < 0 ? 0: 1350));
             mesh.translateX( - center.x );
             mesh.translateY( - center.y );
 
