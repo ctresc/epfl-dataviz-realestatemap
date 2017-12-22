@@ -5,8 +5,8 @@ d3threeD( $d3g ); // imported over script tag d3threeD.js
 var renderer, stats, scene, camera,  max_amount = -Infinity, factor = 10000,  mapBase,
 scale = 0.8, width, height, attributeArray = [], currentAttribute = 0; county_geo = [];
 var tweenGroup2D3D = new TWEEN.Group();
-var INFO_TITLE = 'US REAL ESTATE PRICES AVERAGED OVER ALL HOMES PER COUNTY';
-var INFO_LOAD = '';
+// var INFO_TITLE = 'US REAL ESTATE PRICES AVERAGED OVER ALL HOMES PER COUNTY';
+// var INFO_LOAD = '';
 
 var main = function () {
     width = window.innerWidth * scale;
@@ -19,19 +19,19 @@ main();
 
 // DATA LOADING FUNCTIONS
 // loader settings
-var opts = {
-    lines: 9, // The number of lines to draw
-    length: 25, // The length of each line
-    width: 8, // The line thickness
-    radius: 34, // The radius of the inner circle
-    color: '#ffffff', // #rgb or #rrggbb or array of colors
-    speed: 1.9, // Rounds per second
-    trail: 40, // Afterglow percentage
-    className: 'spinner', // The CSS class to assign to the spinner
-};
+// var opts = {
+//     lines: 9, // The number of lines to draw
+//     length: 25, // The length of each line
+//     width: 8, // The line thickness
+//     radius: 34, // The radius of the inner circle
+//     color: '#ffffff', // #rgb or #rrggbb or array of colors
+//     speed: 1.9, // Rounds per second
+//     trail: 40, // Afterglow percentage
+//     className: 'spinner', // The CSS class to assign to the spinner
+// };
 
-var target = document.getElementById('container');
-var info = document.getElementById('info');
+// var target = document.getElementById('container');
+// var info = document.getElementById('info');
 
 function loadData() {
 
@@ -45,8 +45,8 @@ function loadData() {
 function processData(error, counties, timeData) {
 
     // trigger loader
-    var spinner = new Spinner(opts).spin(target);
-    info.innerHTML = INFO_LOAD;
+    // var spinner = new Spinner(opts).spin(target);
+    // info.innerHTML = INFO_LOAD;
 
 
     var loader = new THREE.TextureLoader();
@@ -190,7 +190,7 @@ function init() {
     /******** TO HIDE A LITTLE HACK **********/
     var floorMaterial = new THREE.MeshBasicMaterial( { color: 0x333333, side: THREE.DoubleSide } );
 
-    var floorGeometry1 = new THREE.PlaneGeometry( 1000, 1000, 1, 1);
+    var floorGeometry1 = new THREE.PlaneGeometry( 1024, 1024, 1, 1);
     var floorMesh1 = new THREE.Mesh( floorGeometry1, floorMaterial );
     scene.add( floorMesh1 );
 
