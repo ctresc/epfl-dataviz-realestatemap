@@ -3,7 +3,7 @@
 Process Book of Data visualization project at EPFL involving US housing market data.
 
 Team:    
-* [Juraj Korcek]()    
+* [Juraj Korcek](https://github.com/korcek-juraj)    
 * [Mateusz Paluchowski](https://github.com/PaluchowskiMatthew)    
 * [Christian Tresch](https://github.com/raccc)    
 
@@ -55,7 +55,7 @@ Time series representing prices of household in various US-located zip codes/cou
 [https://www.zillow.com/research/data/](https://www.zillow.com/research/data/)
    
 ## Exploratory Data Analysis <a name="Exploratory_data_analysis"/>     
-Initial Data Analysis consisted of quick and rudimentary data check performed in python, with use of Jupyter Notebooks. Basic histogram plotting amount of data points for each state was performed, as well sanity check for amount of NaN values though the spanning dates for each household. Last but not least, we plotted data in time on simple 2D line plot (for each state) in order to make sure there is 'some story to tell', which we verified is the case, however we want the reader to see it for him/herself.
+Initial Data Analysis consisted of quick and rudimentary data check performed in python, with use of Jupyter Notebooks. Basic histogram plotting amount of data points for each state was performed, as well sanity check for amount of NaN values though the spanning dates for each household. Last but not least, we plotted data in time on simple 2D line plot (for each state) in order to make sure there is 'some story to tell', which we verified is the case, however we want the reader to see it for him/herself. We have also checked the distribtuion of the values. Thanks to this we have found several outliers that would skew a default colormap. Based on this, we have decided to create our own colormap that is robust to outliers. 
     
 ## Designs & Deviations <a name="Designs_&_Deviations"/>    
 
@@ -71,6 +71,17 @@ In our third - final - design we settled on using D3.js alongside a dedicated 3D
 ## Implementation <a name="Implementation"/>     
 
 *Describe the intent and functionality of the interactive visualizations you implemented. Provide clear and well-referenced images showing the key design and interaction elements.*
+
+In this part we will describe the route that lead us to the final solution - step-by-step. 
+
+We have started with US county outline in the TopoJson format. We need to convert this to SVG for visualization purposes. FOr that we decided to use topojson-svg tool that is parto of topojson library. However, as topojson-svg hasn't been ported yet to the newest version of the library we had to use the old one - INSERT.VERSION.HERE in particular. 
+
+Once we had the svg we have used three.js library to extrude it into columns. We have drawn inspiration from example found at FILL.IN.ADDRESS. However, there were problems with triangulation resulting in holes in the columns. After quite some investigation, the problem was solved by using not yet officially released version of three.js - technically, a 5-days-old nightly build. 
+
+Afterwards, we have added legend based on the example found at FILL.IN.ADDRESS. This was not without problems either - the legend title and tick labels were missing. After, some investigaion, we have found out that unlike ticks, the tick lbels and title do not change their size according to the legend automatically. Thus, we had to make up for this missing library feature manually.
+
+Then, we have followed this example to find out how to make part of scene moveable and part of scene static. We need this as we di not want the legend to rotate with the mape and to be affect by zoom or pan.    
+
     
 ## Evaluation <a name="Evaluation"/>
 
