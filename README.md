@@ -67,6 +67,8 @@ In our second design we considered using pure D3.js and provided topology in Top
 
 ### Third Design
 In our third - final - design we settled on using D3.js alongside a dedicated 3D framework Three.js.
+
+We have decided to go with county granularity, as zip granularity was too fine-grained (information overload) while state granularity was too coarse. 
  
 ## Implementation <a name="Implementation"/>     
 
@@ -74,7 +76,7 @@ In our third - final - design we settled on using D3.js alongside a dedicated 3D
 
 In this part we will describe the route that lead us to the final solution - step-by-step. 
 
-We have started with US county outline in the TopoJson format. We need to convert this to SVG for visualization purposes. For that we decided to use topojson-svg tool that is part of topojson library. However, as topojson-svg hasn't been ported yet to the newest version of the topojson library we had to use the old one - 1.6.27 in particular. 
+We have started with US county outline in the TopoJson format. We needed to convert this to SVG for visualization purposes. For that we decided to use topojson-svg tool that is part of topojson library. However, as topojson-svg hasn't been ported yet to the newest version of the topojson library we had to use the old one - 1.6.27 in particular. 
 
 Once we had the svg we have used three.js library to extrude it into columns. We have drawn inspiration from example found at https://threejs.org/examples/webgl_geometry_extrude_shapes2.html. However, there were problems with triangulation resulting in holes in the columns. After quite some investigation, the problem was solved by using not yet officially released version of three.js - technically, a 5-days-old nightly build. 
 
@@ -85,6 +87,10 @@ We have used OrbitControls (part of three.js library) to be able to rotate, pan 
 Thanks to the choice to use orthographic camera, creating 2D <-> 3D switch was pretty trivial. Switch to 2D just moves the camera on top of the map, such that camera's angle is aligned with map's normal.
 
 For animations we have used the tween.js library. With animations the FPS becomes of interest as well. In order to quantify smoothnes of our animations we have used stats.js library. This also allowed us to quantify benefits of various optimizations. And optimization was indeed needed. Initially, we depicted change in average price of the house between months by animating change in color and animating the column "growth". However, we have found out that three.js is not optimized for object growing, as we had to animate the change in a vertex-by-vertex fashion and by doing so the FPS dropped to 0, which was useless. Therefore, we had to find some workaround. And we indeed found one. At initialization, we have found the highest value in our data and initialized height of every column to this value and during animation we were changing just the z coordinate of whole column - three.js is well optimized for this (no more need to animate every vertex separately). By this we were able to get up to 9 fps. The fact that the columns are bigger then they should be is not a problem, as we hid the excessive height below a ground plane and thus this is not vissible to the user. In other words - the outcome is the same, just we got 9 fps instead of 0.  
+
+In order to give user an option to animate the change in prices between months we have used chroniton library. It offers a play button for an automatic animation. However, it also allows user to drag the slider and choose precisely which month he desires to see. This library also did not fit our needs exactly and thus we had to dig in and make some changes. The prblem was the it was using d3.timer which was firin as fast s possible - this was not compatible with our usecase as our animation was quite computationaly intensive and lasted longer then one tick of this timer. Therefore we have replaced d3-timer in this library with d3-interval which allowed us to deifne the interval between ticks precisely. Also, this library was, by default, firing update method on brush event. This was agian not desired due to our animation being too computationaly intensive. Therefore we have changed the library such that the update event is called only on brushend event, i.e. when user realease the slider. Also, we had slightly changed he functionality play button - when animation ends and user clicks the playbutton again, the animations restarts from start. At last, we have changed the text color to white in order to fit our color scheme. 
+
+We have used bootstrap for basic UI styling. 
     
 ## Evaluation <a name="Evaluation"/>
 
