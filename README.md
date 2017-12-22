@@ -114,3 +114,19 @@ Being inspired by the provided NYC population map, initially we wished to visual
    
 - Flexibility – were they flexible when disagreements occurred?    
    Without flexibility we would have not manage to finish this project at all simple because how different initial visions everyone had.
+
+
+### Christian Tresch
+
+- Preparation – were they prepared during team meetings?
+   Both of my team mates were very active and always available to discuss ideas, problems and milestones along the project. They have prepared for each meeting so we were able to keep the meetings efficient and productive.
+
+- Contribution – did they contribute productively to the team discussion and work?
+   Mateusz was very important to the team, which he has enriched with his knowledge in web development, JavaScript and different D3.js approaches. He has consistently pushed the project forward and has quickly adapted to team decisions. He has contributed very important parts of the code and ideas in the project and helped to reach and finish everything we had envisioned.
+   Juraj was very important to the team, for which he has shared valuable development experience, has come up with great ideas and has solved critical performance issues. He has implemented major parts of the platform and contributed invaluable efforts in creating the 3D environment and data connection to the framework and has consistently solved critical problems in the domain to make the project a success.
+
+- Respect for others’ ideas – did they encourage others to contribute their ideas?
+   With initially many different ideas and approaches we were able to reduce the space of ideas in a fair and respectful way and by friendly arguments where everybody has contributed to equal parts and felt that their ideas where respected and also implemented after mutual agreement.
+
+- Flexibility – were they flexible when disagreements occurred?
+   Flexibility very important throughout the hole project since many ideas and approaches where born and discarded along the way. Everybody has been kind and respectful in treating and evaluating the others ideas.
