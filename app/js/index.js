@@ -189,8 +189,9 @@ function init() {
     // var colorNumbers = ['16', '128', '256', '512' ];
     var colorBrewer5CatMap = ['#fef0d9','#fdcc8a','#fc8d59','#e34a33','#b30000'];
 
-    lut = new THREE.Lut( cmaps[3], 512 );
-    tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index / 511.0)).getHexString())]);
+    lut = new THREE.Lut( cmaps[3], 512 );           
+    var upper_colormap_bound_index = 750000 / max_amount * 511.0;
+    tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index < upper_colormap_bound_index ? index / upper_colormap_bound_index - 0.05: 0.95 + 0.05 * (index - upper_colormap_bound_index) / (511 - upper_colormap_bound_index) )).getHexString())]);
     lut.addColorMap('rdylgn', tmp);
     lut = lut.changeColorMap('rdylgn');
     // ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']
