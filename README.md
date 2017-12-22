@@ -150,4 +150,18 @@ Regardless of optional improvements we are happy to report that we have achieved
    With initially many different ideas and approaches we were able to reduce the space of ideas in a fair and respectful way and by friendly arguments where everybody has contributed to equal parts and felt that their ideas where respected and also implemented after mutual agreement.
 
 - Flexibility – were they flexible when disagreements occurred?
-   Flexibility very important throughout the hole project since many ideas and approaches where born and discarded along the way. Everybody has been kind and respectful in treating and evaluating the others ideas.
+   Flexibility very important throughout the hole project since many ideas and approaches where born and discarded along the way. Everybody has been kind and respectful in treating and evaluating the others ideas. 
+
+### Juraj Korcek
+
+- Preparation – were they prepared during team meetings?
+   Yes, indeed. Guys were prepared and everybody brought interesting ideas to the table.
+
+- Contribution – did they contribute productively to the team discussion and work?
+   Yes, both Mateusz and Chris were integral part of the team and contributed important parts to the final result.
+
+- Respect for others’ ideas – did they encourage others to contribute their ideas?
+   Yes, absolutely. The working enivronment was very open, sharing ideas was encouraged. No ideas have been ever dismissed as being stupid.
+
+- Flexibility – were they flexible when disagreements occurred?
+   No conflicts arised. We came to the agreement together using logical reasoning - common sense. I don't think it has ever happened that somebody was dissatisfied with discussion outcomes or decisions. 
