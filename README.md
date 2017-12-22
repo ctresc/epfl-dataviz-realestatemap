@@ -7,6 +7,9 @@ Team:
 * [Mateusz Paluchowski](https://github.com/PaluchowskiMatthew)    
 * [Christian Tresch](https://github.com/raccc)    
 
+Visualization:    
+[Real Estate Map Project](http://epfl-dataviz.s3-website.eu-central-1.amazonaws.com)
+
 ![Final Visualization](FinalViz.jpg)
 
 ##### Table of Contents  
