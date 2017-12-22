@@ -15,7 +15,8 @@ Visualization:
 Screencast:
 [Screencast - Real Estate Map Project](https://vimeo.com/248517643)
 
-![Final Screencast](Screencast_picture.png)
+<img src="Screencast_picture.jpg" href="https://vimeo.com/248517643">
+
 
 ##### Table of Contents
 [Overview](#Overview)
@@ -32,21 +33,21 @@ Screencast:
 
 ## Overview <a name="Overview"/>
 
-The point of this data visualization is to present US house market time data series, spanning through last 20 years.
+The goal of the visualization project was to present data extracted from the US real estate market to visualize the average house price over all different house sizes within a corresponding county from a dataset with time series data, spanning over the past 20 years.
 
 ## Motivation <a name="Motivation"/>
 
-Insights on changes in the housing market in order to help potential investment decisions in the future based on historical data.
+The motivation behind the project was to get a broad overview as well as insights on changes in the housing market in order to help potential investment decisions in the future based on historical data. As a side goal our motivation was to be able to see the crash of the 2008 housing market which can clearly be seen dropping until about 2010 and recovering from then on.
 
 
 ## Target Audience <a name="Target_audience"/>
 
-Real estate investors / Market analysts.
+As a target audience we have identified real estate investors and market analysts.
 
 
 ## Related Work and Inspiration <a name="Related_work_and_inspiration"/>
 
-Inspired by www.trulia.com and interest in real estate market in general. Moreover, this visualization was particularly inspirational.
+We have been inspired by web platforms such as www.trulia.com and www.zillow.com and have a general interest in real estate market data. Moreover, the follwing visualization was particularly inspirational:
 
 ![NYC inspiration](https://imgs.6sqft.com/wp-content/uploads/2015/07/20212442/New-york-city-population-day-versus-night.jpg)
 
