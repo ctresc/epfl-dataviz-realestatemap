@@ -250,11 +250,8 @@ function init() {
     tmp = Array.from(new Array(512),(val,index)=>[index / 511.0, '0x' + (new THREE.Color(d3.interpolateRdYlGn(index < upper_colormap_bound_index ? index / upper_colormap_bound_index - 0.05: 0.95 + 0.05 * (index - upper_colormap_bound_index) / (511 - upper_colormap_bound_index) )).getHexString())]);
     lut.addColorMap('rdylgn', tmp);
     lut = lut.changeColorMap('rdylgn');
-    // ['#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026']
-    // var colorBrewerMap = [ [ 0.0, '0xffffb2' ], [ 0.2, '0xfecc5c' ], [ 0.5, '0xfd8d3c' ], [ 0.8, '0xf03b20' ],  [ 1.0, '0xbd0026' ] ];
-    // lut.addColorMap('colorBrewerMap', colorBrewerMap);
-    // lut = lut.changeColorMap('colorBrewerMap');
-    lut.setMax( max_amount );
+    var roundedMax = Math.round( max_amount / Math.pow(10,5)) * Math.pow(10,5); 
+    lut.setMax( roundedMax );
     lut.setMin( 0 );
 
 
