@@ -282,12 +282,12 @@ function init() {
     labels['title'].material.opacity = 0;
     for ( var i = 0; i < Object.keys( labels[ 'ticks' ] ).length; i++ ) {
         sceneOverlay.add ( labels[ 'lines' ][ i ] );
-        labels[ 'lines' ][ i ].position.set(labels[ 'lines' ][ i ].position.x, labels[ 'lines' ][ i ].position.y + 2, labels[ 'lines' ][ i ].position.z);
+        labels[ 'lines' ][ i ].position.set(labels[ 'lines' ][ i ].position.x, labels[ 'lines' ][ i ].position.y, labels[ 'lines' ][ i ].position.z);
         labels[ 'lines' ][ i ].material.transparent = true;
         labels[ 'lines' ][ i ].material.opacity = 0;
         sceneOverlay.add ( labels[ 'ticks' ][ i ] );
         labels[ 'ticks' ][ i ].scale.set(labels[ 'ticks' ][ i ].scale.x * 100, labels[ 'ticks' ][ i ].scale.y * 100, labels[ 'ticks' ][ i ].scale.z);
-        labels['ticks'][i].position.set(labels['ticks'][i].position.x, labels[ 'ticks' ][ i ].position.y + labels['ticks'][i].scale.y /4 - 2, labels['ticks'][i].position.z);
+        labels['ticks'][i].position.set(labels['ticks'][i].position.x, labels[ 'ticks' ][ i ].position.y + 2*i + 10, labels['ticks'][i].position.z);
         labels[ 'ticks' ][ i ].material.transparent = true;
         labels[ 'ticks' ][ i ].material.opacity = 0;
     }
