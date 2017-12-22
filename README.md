@@ -80,8 +80,9 @@ Once we had the svg we have used three.js library to extrude it into columns. We
 
 Afterwards, we have added legend based on the example found at https://threejs.org/examples/webgl_geometry_colors_lookuptable.html. This was not without problems either - the legend title and tick labels were missing. After some investigaion, we have found out that unlike ticks, the tick labels and legend title do not change their size automatically according to the legend automatically. Thus, we had to make up for this missing library feature manually. Also, even though the library allows choosing fontsize and font type it does not allow choosing font color. Therefore, we had to digg into the library and set the font color there. As there are only 4 colormaps in three.js library by default we have devised a method that transforms a d3.js colormaps into three.js colormaps. In the process we have used https://github.com/d3/d3-scale-chromatic library to get continous d3.js colormaps. In the end, we had to create our own colormap anyway in order to account for outliers. 
 
-Then, we have followed this example to find out how to make part of scene moveable and part of scene static. We need this as we di not want the legend to rotate with the mape and to be affect by zoom or pan.    
+We have used OrbitControls (part of three.js library) to be able to rotate, pan and zoom the map. Then, we have followed the example https://threejs.org/examples/webgl_sprites.html to find out how to make part of scene moveable and part of scene static. We needed this as we did not want the legend to rotate with the map nor to be affected by zoom or pan.    
 
+Thanks to the choice to use orthographic camera, creating 2D <-> 3D switch was pretty trivial. Switch to 2D just moves the camera on top of the map, such that camera's angle is aligned with map's normal.
     
 ## Evaluation <a name="Evaluation"/>
 
