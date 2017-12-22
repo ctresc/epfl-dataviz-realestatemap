@@ -113,6 +113,10 @@ We have used bootstrap for basic UI styling.
 
 Being inspired by the provided NYC population map, initially we wished to visualize each zip code, however due to performance issues we settled on using counties instead. Zip code TopoJson simply consists of way too many arcs and any transformations are CPU intensive resulting in chopped animations.
 
+We have been able to show the variation of the average prices of the US house market over time, thus we had a chance to learn the hotspots and less expensive counties in the country with respect to housing price. We were also able to verify our side goal which was to visualize the 2008 crash of the US housing market which can clearly be seen from 2008 until 2010 with price drops throughout all the country. Surprising is indeed how the market has recovered since then and the most popular counties in the US are significantly higher than ever before. I.e. New York, San Francisco, Silicon Valley area, and interestingly also Aspen as a very famous ski resort.
+
+Further improvements would involve a proper tooltip with which the user would be able to directly display the hovered county and it's corresponding price tag. While this is a trivial task to complete in D3.js it is quite more complicated in THREE.js and requires the tracing of an additional vector in space from the mouse to the camera to verify an intersection with hovered objects in space. We have pursued this idea with a proof of concept branch and were able to display a respective tooltip tag but achieving proper alignment in 3D space has turned out to be harder than expected and has not a state of development we were comfortable showing.
+
 ## Peer Assessment
 
 ### Mateusz Paluchowski
