@@ -275,7 +275,7 @@ function init() {
 
     // Tooltip section
     // initialize object to perform world/screen calculations
-    projector = new THREE.Projector();
+    //TODO projector = new THREE.Projector();
 
     /////// draw text on canvas /////////
     // create a canvas element
@@ -289,7 +289,7 @@ function init() {
     texture1 = new THREE.Texture(canvas1)
     texture1.needsUpdate = true;
 
-    var spriteMaterial = new THREE.SpriteMaterial( { map: texture1, useScreenCoordinates: true } );
+    var spriteMaterial = new THREE.SpriteMaterial( { map: texture1} );
     //var materialC = new THREE.SpriteMaterial( { map: mapC, color: 0xffffff, fog: true } );
 
     sprite1 = new THREE.Sprite( spriteMaterial );
@@ -356,6 +356,10 @@ var addGeoObject = function( group, svgObject ) {
             mesh.translateZ( - amount / factor - 1);
             mesh.translateX( - center.x );
             mesh.translateY( - center.y );
+
+            //TODO
+            mesh.name = county_geo[path_to_county_geo[i]].properties['NAMELSAD10'];
+            group.name = 'All that land';
 
             group.add( mesh );
 
