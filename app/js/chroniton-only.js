@@ -95,6 +95,7 @@ function chroniton() {
 
       g.select('.x.axis')
         .attr('transform', 'translate(0,' + (height - margin.bottom - margin.top) + ')')
+        .attr('fill', 'white')
         .call(xAxis);
 
       var domainNode = g.select('.x.axis .domain')
@@ -120,7 +121,8 @@ function chroniton() {
         playIcon = playButtonG.append('path')
           .attr('transform', 'translate(2, 2)')
           .attr('d', playD)
-          .attr('class', 'play-button');
+          .attr('class', 'play-button')
+          .attr('fill', 'white');
         var playRect = playButtonG.append('rect')
           .attr('fill', 'none')
           .attr('pointer-events', 'visible')
@@ -152,7 +154,8 @@ function chroniton() {
 
       var labelText = textG
         .append('text')
-        .attr('class', 'label');
+        .attr('class', 'label')
+        .attr('fill', 'white');
 
       slider.call(brush.event);
 
@@ -192,7 +195,8 @@ function chroniton() {
 
         labelText
           .text(labelFormat(value))
-          .attr('text-anchor', 'left');
+          .attr('text-anchor', 'left')
+          .attr('fill', 'white');
 
         var textRadius = labelText.node().getComputedTextLength() / 2,
           leftEdge = xScale(value) - textRadius,

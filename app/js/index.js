@@ -125,6 +125,38 @@ function processData(error, counties, timeData) {
                             }
                     })
                     .start();
+            new TWEEN.Tween(legend.material)
+                    .to({opacity: 1}, 1500)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .delay(6500)
+                    .start()          
+           new TWEEN.Tween(labels['title'].material)
+                    .to({opacity: 1}, 1500)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .delay(6500)
+                    .start()
+            for ( var i = 0; i < Object.keys( labels[ 'ticks' ] ).length; i++ ) {
+                new TWEEN.Tween(labels[ 'lines' ][ i ].material)
+                    .to({opacity: 1}, 1500)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .delay(6500)
+                    .start()
+                new TWEEN.Tween(labels[ 'ticks' ][ i ].material)
+                    .to({opacity: 1}, 1500)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .delay(6500)
+                    .start()
+            }
+            var sldr = document.getElementById('slider_container');
+            var bottom = { val: -60 };
+            var tween = new TWEEN.Tween(bottom)
+                    .to({ val: 0 }, 1000)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .onUpdate(function() {
+                        sldr.style.setProperty('bottom', bottom.val + 'px');
+                    })
+                    .delay(8000)
+                    .start();
             animateMap();
         },
         // Function called when download progresses
@@ -239,17 +271,25 @@ function init() {
     scene.add( mapBaseMesh );
 
     legend = lut.setLegendOn( { 'layout':'vertical', position: { x: 650, y: -height / 25, z: 1 } , dimensions: { width: 50, height: height/2 }});
+    legend.material.transparent = true;
+    legend.material.opacity = 0;
     sceneOverlay.add(legend);
     labels = lut.setLegendLabels({ 'fontsize': 20, 'title': 'Average House Price', 'um': '$', 'ticks': 5, 'fontface': 'Helvetica'});
     sceneOverlay.add ( labels['title'] );
     labels['title'].scale.set(labels['title'].scale.x * 100, labels['title'].scale.y * 100, labels['title'].scale.z);
     labels['title'].position.set(lut.legend.position.x/* + lut.legend.dimensions.width */, labels['title'].position.y, labels['title'].position.z);
+    labels['title'].material.transparent = true;
+    labels['title'].material.opacity = 0;
     for ( var i = 0; i < Object.keys( labels[ 'ticks' ] ).length; i++ ) {
         sceneOverlay.add ( labels[ 'lines' ][ i ] );
         labels[ 'lines' ][ i ].position.set(labels[ 'lines' ][ i ].position.x, labels[ 'lines' ][ i ].position.y + 2, labels[ 'lines' ][ i ].position.z);
+        labels[ 'lines' ][ i ].material.transparent = true;
+        labels[ 'lines' ][ i ].material.opacity = 0;
         sceneOverlay.add ( labels[ 'ticks' ][ i ] );
         labels[ 'ticks' ][ i ].scale.set(labels[ 'ticks' ][ i ].scale.x * 100, labels[ 'ticks' ][ i ].scale.y * 100, labels[ 'ticks' ][ i ].scale.z);
         labels['ticks'][i].position.set(labels['ticks'][i].position.x, labels[ 'ticks' ][ i ].position.y + labels['ticks'][i].scale.y /4 - 2, labels['ticks'][i].position.z);
+        labels[ 'ticks' ][ i ].material.transparent = true;
+        labels[ 'ticks' ][ i ].material.opacity = 0;
     }
 
     //
