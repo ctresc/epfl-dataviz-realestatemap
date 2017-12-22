@@ -117,6 +117,8 @@ We have been able to show the variation of the average prices of the US house ma
 
 Further improvements would involve a proper tooltip with which the user would be able to directly display the hovered county and it's corresponding price tag. While this is a trivial task to complete in D3.js it is quite more complicated in THREE.js and requires the tracing of an additional vector in space from the mouse to the camera to verify an intersection with hovered objects in space. We have pursued this idea with a proof of concept branch and were able to display a respective tooltip tag but achieving proper alignment in 3D space has turned out to be harder than expected and has not a state of development we were comfortable showing.
 
+Regardless of optional improvements we are happy to report that we have achieved our goal of visualizing the market and it's development presented in an interactive 3-dimensional environment including a time slider and animations with an optional toggle to switch to 2D, as initially agreed with the TA's upon project definition achieving the goals of the task as stated in the requirements.
+
 ## Peer Assessment
 
 ### Mateusz Paluchowski
