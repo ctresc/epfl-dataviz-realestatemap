@@ -15,7 +15,7 @@ Visualization:
 Screencast:
 [Screencast - Real Estate Map Project](https://vimeo.com/248517643)
 
-![Final Screencast](Screencast_picture.jpg)
+![Final Screencast](Screencast_picture.png)
 
 ##### Table of Contents
 [Overview](#Overview)
