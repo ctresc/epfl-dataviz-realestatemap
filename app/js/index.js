@@ -106,7 +106,7 @@ function processData(error, counties, timeData) {
 
             animate();
 
-            var opTween = new TWEEN.Tween(mapBaseMaterial)
+            new TWEEN.Tween(mapBaseMaterial)
                     .to({opacity: 1}, 1500)
                     .easing(TWEEN.Easing.Linear.None)
                     .onComplete(function(){
@@ -115,16 +115,17 @@ function processData(error, counties, timeData) {
                                 if (i > 0 && pathShapes[i-1] != pathShapes[i]) {
                                     amnt = county_geo[path_to_county_geo[pathShapes[i]]].properties[attributeArray[currentAttribute]];
                                     clr = lut.getColor(Math.max(amnt, 0));
-                                }                          
+                                }     
+                                if (amnt < 0) continue;                     
                                 new TWEEN.Tween(mesh.position)
-                                    .to({z: amnt / factor + 1}, 2500)
+                                    .to({z: amnt / factor + 1}, Math.floor(1500 + Math.random() * 1000))
                                     .easing(TWEEN.Easing.Sinusoidal.InOut)
                                     .delay(Math.floor(Math.random() * 2500))
                                     .start();                           
                             }
                     })
                     .start();
-            //animateMap();
+            animateMap();
         },
         // Function called when download progresses
         function ( xhr ) {
