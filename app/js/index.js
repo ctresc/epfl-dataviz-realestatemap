@@ -150,7 +150,7 @@ function init() {
 
     //
 
-    // camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 2000 );
+    //camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 2000 );
     camera = new THREE.OrthographicCamera( width / -2, width /2, height / 2, height / -2, 1, 2000 );
     camera.position.set( 0, -450, 1000 );
     scene.add(camera);
@@ -358,7 +358,8 @@ var addGeoObject = function( group, svgObject ) {
             mesh.translateY( - center.y );
 
             //TODO
-            mesh.name = county_geo[path_to_county_geo[i]].properties['NAMELSAD10'];
+            var countyName = county_geo[path_to_county_geo[i]].properties['NAMELSAD10']
+            mesh.name = countyName + ' - Avg price: ' + amount ;
             group.name = 'All that land';
 
             group.add( mesh );
@@ -493,12 +494,14 @@ function tooltipUpdate()
     // create a Ray with origin at the mouse position
     //   and direction into the scene (camera direction)
     var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+    scene.add(vector);
     //projector.unprojectVector( vector, camera );
+    //camera = cameraOverlay;
     vector.unproject(camera);
     var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 
     // create an array containing all objects in the scene with which the ray intersects
-    var intersects = ray.intersectObjects( scene.children );
+    var intersects = ray.intersectObjects( scene.children[5].children );
 
     // INTERSECTED = the object in the scene currently closest to the camera
     //		and intersected by the Ray projected from the mouse position
@@ -525,7 +528,7 @@ function tooltipUpdate()
                 context1.clearRect(0,0,640,480);
                 var message = intersects[ 0 ].object.name;
                 var metrics = context1.measureText(message);
-                var width = metrics.width;
+                var width = 2*metrics.width;
                 context1.fillStyle = "rgba(0,0,0,0.95)"; // black border
                 context1.fillRect( 0,0, width+8,20+8);
                 context1.fillStyle = "rgba(255,255,255,0.95)"; // white filler
