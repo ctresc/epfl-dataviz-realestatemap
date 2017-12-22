@@ -157,6 +157,10 @@ function init() {
     /******** TO HIDE A LITTLE HACK **********/
     var floorMaterial = new THREE.MeshBasicMaterial( { color: 0x333333, side: THREE.DoubleSide } );
 
+    var floorGeometry1 = new THREE.PlaneGeometry( 1000, 1000, 1, 1);
+    var floorMesh1 = new THREE.Mesh( floorGeometry1, floorMaterial );
+    scene.add( floorMesh1 );
+
     var floorGeometry2 = new THREE.PlaneGeometry( 100000000, max_amount / factor, 1, 1);
     //var floorMaterial2 = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
     var floorMesh2 = new THREE.Mesh( floorGeometry2, floorMaterial );
