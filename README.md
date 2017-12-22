@@ -1,13 +1,13 @@
 # Data Visualization: Real Estate Map Project
 
-Repository of Data visualization project at EPFL involving US housing market data.
+Process Book of Data visualization project at EPFL involving US housing market data.
 
 Team:    
 * [Juraj Korcek]()    
 * [Mateusz Paluchowski](https://github.com/PaluchowskiMatthew)    
 * [Christian Tresch](https://github.com/raccc)    
 
-![Tilt-shift houses](https://i.ytimg.com/vi/9BBZCfQcGus/maxresdefault.jpg)
+![Final Visualization](FinalViz.jpg)
 
 ##### Table of Contents  
 [Overview](#Overview)  
